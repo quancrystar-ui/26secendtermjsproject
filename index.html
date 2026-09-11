@@ -1,13 +1,374 @@
 <!DOCTYPE html>
-<html>
-	<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>오늘예제</title>
-	</head>
-	<body>
-		<h1>오늘의 수업</h1>
-		<div>코딩수업</div>
-		<section>룰루랄라</section>
-	</body>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS 프로젝트 스튜디오 - 수강생 정보</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --panel: #ffffff;
+    --text: #172033;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #2563eb;
+    --accent-soft: #dbeafe;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+  }
+  .app {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  h1, h2, h3, p { margin: 0; }
+  h1 { font-size: clamp(24px, 4vw, 36px); letter-spacing: -0.05em; }
+  .subtitle { margin-top: 8px; color: var(--muted); font-size: 14px; }
+  .badge {
+    background: var(--accent-soft);
+    color: #1d4ed8;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  input, select {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    outline: none;
+  }
+  input { flex: 1; min-width: 220px; }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+  .layout {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .panel-title {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .student-list { max-height: 600px; overflow-y: auto; }
+  .student-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 0;
+    border-bottom: 1px solid #eef0f4;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    padding: 15px 18px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .student-btn:hover { background: #f8fafc; }
+  .student-btn.active { background: var(--accent-soft); color: #1d4ed8; font-weight: 700; }
+  .number { width: 24px; color: var(--muted); font-size: 11px; }
+  .student-name { flex: 1; }
+  .arrow { color: var(--muted); font-size: 20px; }
+  .count { padding: 12px 18px; color: var(--muted); font-size: 12px; }
+  .detail { padding: 28px; min-height: 430px; }
+  .detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .detail-name { font-size: 32px; font-weight: 800; letter-spacing: -0.06em; }
+  .detail-meta { color: var(--muted); font-size: 13px; margin-top: 7px; }
+  .avatar {
+    width: 58px; height: 58px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: #1d4ed8;
+    font-size: 22px; font-weight: 800;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .info {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 15px;
+    min-width: 0;
+  }
+  .info-label { color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+  .info-value { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .action:hover { opacity: .82; }
+  .action.primary { background: var(--accent); border-color: var(--accent); color: white; }
+  .empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+  .notice {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  @media (max-width: 760px) {
+    .app { padding: 24px 14px; }
+    .header { align-items: flex-start; flex-direction: column; }
+    .layout { grid-template-columns: 1fr; }
+    .student-list { max-height: 300px; }
+    .detail { padding: 22px; }
+    .detail-name { font-size: 27px; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #60a5fa;
+      --accent-soft: #1e3a5f;
+    }
+    .student-btn:hover, .info { background: #1f2937; }
+    .student-btn { border-bottom-color: #253247; }
+    .action { background: #111827; color: var(--text); }
+    .action.primary { color: #0f172a; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="header">
+    <div>
+      <h1>JS 프로젝트 스튜디오</h1>
+      <p class="subtitle">수강생 정보 브라우저 · 이름을 클릭해 상세 정보를 확인하세요.</p>
+    </div>
+    <div class="badge" id="total-badge">수강생 0명</div>
+  </header>
+
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="이름, 음식, 지역, 가수 등으로 검색..." aria-label="수강생 검색">
+    <select id="sort" aria-label="정렬">
+      <option value="number">수강생 번호순</option>
+      <option value="name">이름순</option>
+    </select>
+  </div>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-title">수강생 목록</div>
+      <div id="student-list" class="student-list"></div>
+      <div id="count" class="count"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">수강생 상세 정보</div>
+      <div id="detail" class="detail"></div>
+    </section>
+  </div>
+
+  <p class="notice">
+    ※ SNS 항목이 인스타그램 아이디 형식으로 입력된 경우 Instagram 방문 버튼이 생성됩니다.
+    실제 계정 존재 여부는 인스타그램에서 확인해 주세요.
+  </p>
+</main>
+
+<script>
+const students = [
+  { no: 0, name: "이병학", food: "텐동", place: "평촌", media: "슈퍼뒤에서 담배피우는 두사람", singer: "스피츠", sns: "@lee____bh", email: "jazzwine@gmail.com", github: "https://github.com/lee-bh" },
+  { no: 1, name: "김민지", food: "마라탕", place: "기숙사", media: "오디세이", singer: "스파이에어", sns: "@ljrxmo", email: "gjbmjd0311@naver.com", github: "https://github.com/winner3491-debug" },
+  { no: 2, name: "김예진", food: "쌈밥", place: "수원", media: "오디세이", singer: "지소쿠리클럽", sns: "@yezzzzzzzzzzzin", email: "zimzezin@gmail.com", github: "https://github.com/zimzezin-yap" },
+  { no: 3, name: "김주은", food: "연어초밥", place: "연신내", media: "옵세션", singer: "실리카겔", sns: "@pinking.making", email: "pkxx128@gmail.com", github: "https://github.com/piking-making" },
+  { no: 4, name: "김채호", food: "계란찜", place: "하계", media: "오디세이", singer: "킹누", sns: "@k_chaeho", email: "hoya991005@gmail.com", github: "https://github.com/chaeho-kim" },
+  { no: 5, name: "남미경", food: "샌드위치", place: "명일동", media: "슬로우 호시스", singer: "alice merton", sns: "@youanialways", email: "quancrystar@gmail.com", github: "https://github.com/quancrystar-ui" },
+  { no: 6, name: "박소영", food: "치킨", place: "기숙사", media: "피아니스트", singer: "빅뱅", sns: "@parksozero", email: "sozeropark@gmail.com", github: "https://github.com/sozeropark" },
+  { no: 7, name: "원유미", food: "샤브샤브", place: "방배동", media: "Spiderman", singer: "Alvaro Soler", sns: "@nv.quynhu", email: "nv.quynhu26@gmail.com", github: "https://github.com/nvquynhu26" },
+  { no: 8, name: "임영현", food: "", place: "", media: "", singer: "", sns: "", email: "", github: "" },
+  { no: 9, name: "임훈정", food: "삼겹살", place: "중계동", media: "오디세이", singer: "jayb", sns: "@by_seohua", email: "godbok25@gmail.com", github: "https://github.com/godbok25" },
+  { no: 10, name: "채영미", food: "통닭", place: "동두천", media: "들쥐", singer: "드렁큰타이거", sns: "@artbadwoman", email: "gypog5122@naver.com", github: "https://github.com/gypog5122-cell" },
+  { no: 11, name: "최동욱", food: "초밥", place: "하계", media: "오디세이", singer: "한로로", sns: "@ch_dongwook", email: "cdw0427@gmail.com", github: "https://github.com/dw-427" },
+  { no: 12, name: "카밀라", food: "치즈 가리비", place: "석계", media: "들쥐", singer: "한로로", sns: "@camisald", email: "cami.saldivia@gmail.com", github: "https://github.com/cami-sal" },
+  { no: 13, name: "한다빈", food: "뇨끼", place: "공릉", media: "릴로와 스티치", singer: "Laufey", sns: "@dabinciii", email: "dabin.d.han@gmail.com", github: "https://github.com/dabinciii" },
+  { no: 14, name: "호프슈타트 파울", food: "피자", place: "공릉", media: "라스트 에어 벤더", singer: "잔나비", sns: "@dtc_ph", email: "phdtc@naver.com", github: "https://github.com/dtcph" },
+  { no: 15, name: "홍정욱", food: "햄버거", place: "전농동", media: "파라노만", singer: "백예린", sns: "@hongstl_studio", email: "hongstle@gmail.com", github: "https://github.com/hongstle-a11y" },
+  { no: 16, name: "이서진", food: "연어덮밥", place: "하계", media: "치이카와", singer: "나토리", sns: "2_seo__jin", email: "apec0714@gmail.com", github: "https://github.com/HappyHaeyo" }
+];
+
+let selected = students[0];
+
+const listEl = document.getElementById("student-list");
+const detailEl = document.getElementById("detail");
+const searchEl = document.getElementById("search");
+const sortEl = document.getElementById("sort");
+const countEl = document.getElementById("count");
+const totalBadge = document.getElementById("total-badge");
+
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[char]));
+}
+
+function valueOrEmpty(value) {
+  return value ? escapeHtml(value) : '<span style="color:var(--muted)">정보 없음</span>';
+}
+
+function instagramUrl(sns) {
+  if (!sns) return "";
+  const handle = sns.replace(/^@/, "").trim();
+  return handle ? "https://www.instagram.com/" + handle + "/" : "";
+}
+
+function renderList() {
+  const query = searchEl.value.trim().toLowerCase();
+
+  const filtered = students
+    .filter(student => [
+      student.name, student.food, student.place,
+      student.media, student.singer, student.sns
+    ].join(" ").toLowerCase().includes(query))
+    .sort((a, b) => sortEl.value === "name"
+      ? a.name.localeCompare(b.name, "ko")
+      : a.no - b.no
+    );
+
+  countEl.textContent = `${filtered.length}명 표시 / 전체 ${students.length}명`;
+
+  if (!filtered.length) {
+    listEl.innerHTML = '<div class="empty">검색 결과가 없습니다.</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(student => `
+    <button class="student-btn ${selected && selected.name === student.name ? "active" : ""}"
+            data-name="${escapeHtml(student.name)}">
+      <span class="number">${String(student.no + 1).padStart(2, "0")}</span>
+      <span class="student-name">${escapeHtml(student.name)}</span>
+      <span class="arrow">›</span>
+    </button>
+  `).join("");
+
+  listEl.querySelectorAll(".student-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      selected = students.find(student => student.name === button.dataset.name);
+      renderList();
+      renderDetail();
+    });
+  });
+}
+
+function renderDetail() {
+  if (!selected) {
+    detailEl.innerHTML = '<div class="empty">수강생을 선택해 주세요.</div>';
+    return;
+  }
+
+  const instagram = instagramUrl(selected.sns);
+  const initial = selected.name.trim().charAt(0);
+
+  detailEl.innerHTML = `
+    <div class="detail-head">
+      <div>
+        <h2 class="detail-name">${escapeHtml(selected.name)}</h2>
+        <p class="detail-meta">JS 프로젝트 스튜디오 · 수강생 ${selected.no + 1}</p>
+      </div>
+      <div class="avatar">${escapeHtml(initial)}</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info">
+        <div class="info-label">좋아하는 음식</div>
+        <div class="info-value">${valueOrEmpty(selected.food)}</div>
+      </div>
+      <div class="info">
+        <div class="info-label">사는 곳</div>
+        <div class="info-value">${valueOrEmpty(selected.place)}</div>
+      </div>
+      <div class="info">
+        <div class="info-label">최근에 본 영화/드라마</div>
+        <div class="info-value">${valueOrEmpty(selected.media)}</div>
+      </div>
+      <div class="info">
+        <div class="info-label">좋아하는 가수</div>
+        <div class="info-value">${valueOrEmpty(selected.singer)}</div>
+      </div>
+      <div class="info">
+        <div class="info-label">SNS</div>
+        <div class="info-value">${valueOrEmpty(selected.sns)}</div>
+      </div>
+      <div class="info">
+        <div class="info-label">Gmail</div>
+        <div class="info-value">${valueOrEmpty(selected.email)}</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      ${instagram
+        ? `<a class="action primary" href="${escapeHtml(instagram)}" target="_blank" rel="noopener noreferrer">Instagram 방문 ↗</a>`
+        : ""}
+      ${selected.email
+        ? `<a class="action" href="mailto:${escapeHtml(selected.email)}">이메일 보내기</a>`
+        : ""}
+      ${selected.github
+        ? `<a class="action" href="${escapeHtml(selected.github)}" target="_blank" rel="noopener noreferrer">GitHub 방문 ↗</a>`
+        : ""}
+    </div>
+  `;
+}
+
+searchEl.addEventListener("input", renderList);
+sortEl.addEventListener("change", renderList);
+totalBadge.textContent = `수강생 ${students.length}명`;
+renderList();
+renderDetail();
+</script>
+</body>
 </html>
