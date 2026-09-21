@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TAEBAEK CITY | 태백 여행</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#e9e5da;color:#273431;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.app{max-width:430px;min-height:100vh;margin:auto;background:#f8f6f0;padding-bottom:78px;overflow:hidden}
+header{padding:20px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:10px;align-items:center}.realLogo{width:38px;height:48px;object-fit:contain;display:block}.brand b{color:#957238;font-size:17px;letter-spacing:4px}.brand small{display:block;color:#957238;font-size:8px;letter-spacing:2px;margin-top:3px}
+.hero{margin:0 16px 18px;height:280px;border-radius:24px;overflow:hidden;position:relative;background:linear-gradient(160deg,#9eafb1,#526964 58%,#283d39)}.hero:before{content:"";position:absolute;width:120%;height:65%;bottom:-8%;left:-10%;background:linear-gradient(145deg,transparent 38%,#71877b 39% 52%,transparent 53%),linear-gradient(35deg,transparent 34%,#354f49 35% 62%,transparent 63%)}.hero:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(12,25,22,.72))}.heroText{position:absolute;z-index:2;left:22px;bottom:24px;color:white}.heroText small{letter-spacing:2px}.heroText h1{font-size:27px;line-height:1.3;margin:8px 0}.heroText p{font-size:11px;margin:0;opacity:.9}
+.search{margin:0 16px 22px;padding:14px 16px;background:#fff;border-radius:14px;color:#999;font-size:13px}.search span{float:right;color:#9a773e}
+section{padding:0 16px;margin-bottom:22px}.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:12px}.head h2{font-size:18px;margin:0}.head button{border:0;background:none;color:#997741;font-size:11px}
+.cards{display:flex;gap:10px;overflow:auto}.card{min-width:148px;height:174px;border-radius:16px;overflow:hidden;position:relative;background:#526c64}.pic{height:100%;background:linear-gradient(145deg,#9cafae,#48645d 52%,#253a35)}.card:nth-child(2) .pic{background:linear-gradient(145deg,#77766e,#303a36 55%,#171d1c)}.card:nth-child(3) .pic{background:linear-gradient(145deg,#b5c3b5,#597365 55%,#33493e)}.card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.78))}.ct{position:absolute;z-index:2;bottom:13px;left:13px;color:#fff}.ct b{display:block;font-size:14px}.ct small{font-size:9px;opacity:.85}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.chip{background:#fff;border-radius:14px;padding:14px 3px;text-align:center;font-size:10px;box-shadow:0 3px 10px #0000000a}.chip i{display:block;font-style:normal;font-size:20px;margin-bottom:6px;color:#98763d}
+.route{background:#293d39;color:#fff;border-radius:18px;padding:18px}.route small{color:#d8c49d}.route h3{font-size:17px;margin:7px 0 14px}.stop{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #ffffff25;font-size:11px}
+.info{background:#eee9dd;border-radius:18px;padding:16px;font-size:11px;line-height:1.7}.info b{font-size:14px}
+.detail{display:none;padding:0 16px}.back{border:0;background:none;padding:4px 0 14px;color:#8f6d38}.detailBox{background:white;border-radius:18px;padding:18px}.detailBox h2{margin:0 0 8px}.detailBox p{font-size:12px;line-height:1.7}.detailBox a{display:block;margin-top:12px;color:#8f6d38;font-size:12px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:#fff;border-top:1px solid #ddd8cc;display:flex;justify-content:space-around;padding:11px 0 10px;z-index:5}nav button{border:0;background:none;color:#777;font-size:10px}nav button.active{color:#92703a;font-weight:bold}nav span{display:block;font-size:18px;margin-bottom:3px}
+
+.masthead{height:420px;position:relative;overflow:hidden;background:#d8d3c5;border-radius:0 0 30px 30px}
+.mastSky{position:absolute;inset:0;background:linear-gradient(180deg,#dfe8e5 0%,#c7d0c6 48%,#8ea19a 100%)}
+.mastMountain{position:absolute;bottom:-10px;width:115%;height:48%;left:-7%;border-radius:50% 50% 0 0/100% 100% 0 0;transform:rotate(-5deg)}
+.m1{background:#6c7d75;bottom:-24px;left:-28%}
+.m2{background:#415a53;bottom:-52px;left:20%;transform:rotate(7deg)}
+.m3{background:#263e3a;bottom:-77px;left:-10%;opacity:.92}
+.mastOverlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,30,27,.08),rgba(15,29,26,.55))}
+.mastContent{position:absolute;inset:0;z-index:2;text-align:center;color:white;padding-top:38px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.mastLogo{width:72px;height:90px;object-fit:contain;display:block;margin:0 auto 3px;filter:brightness(1.03)}
+.mastCity{font-size:20px;font-weight:600;letter-spacing:5px}
+.mastEn{font-size:9px;letter-spacing:4px;margin-top:4px;opacity:.92}
+.mastLine{width:52px;border-top:1px solid rgba(255,255,255,.7);margin:20px auto 16px}
+.mastCopy{font-size:30px;line-height:1.38;font-weight:500;letter-spacing:-1px}
+.mastSub{font-size:8px;letter-spacing:3px;margin-top:15px;opacity:.85}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<main id="home">
+<div class="masthead">
+  <div class="mastSky"></div>
+  <div class="mastMountain m1"></div>
+  <div class="mastMountain m2"></div>
+  <div class="mastMountain m3"></div>
+  <div class="mastOverlay"></div>
+  <div class="mastContent">
+    <img class="mastLogo" src="data:image/png;base64,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" alt="태백시 로고">
+    <div class="mastCity">태백시</div>
+    <div class="mastEn">TAEBAEK CITY</div>
+    <div class="mastLine"></div>
+    <div class="mastCopy">산과 사람이<br>만나는 곳, 태백</div>
+    <div class="mastSub">NATURE · HISTORY · CULTURE</div>
+  </div>
+</div>
+
+
+
+<section><div class="head"><h2>태백의 대표 여행지</h2><button onclick="showAll()">더보기 ›</button></div>
+<div class="cards">
+<button class="card" onclick="detail('태백산국립공원','강원특별자치도 태백시 천제단길 166','태백의 대표적인 산악 관광지입니다.','https://tour.taebaek.go.kr/tour/go/nature')"><div class="pic"></div><div class="ct"><b>태백산국립공원</b><small>산과 자연</small></div></button>
+<button class="card" onclick="detail('석탄박물관','강원특별자치도 태백시 천제단길 195','태백 석탄의 역사와 탄광촌의 생활상을 살펴볼 수 있는 박물관입니다.','https://tour.taebaek.go.kr/tour/tour/recommend/story_recommend_theme/story_recommend_theme_two')"><div class="pic"></div><div class="ct"><b>석탄박물관</b><small>산업과 역사</small></div></button>
+<button class="card" onclick="detail('황지연못','강원특별자치도 태백시 황지연못길 12','낙동강 1300리의 발원지로 태백 도심에 위치한 연못입니다.','https://tour.taebaek.go.kr/tour/go/nature')"><div class="pic"></div><div class="ct"><b>황지연못</b><small>자연과 이야기</small></div></button>
+</div></section>
+
+<section><div class="head"><h2>여행을 시작해볼까요?</h2></div><div class="chips">
+<div class="chip" onclick="showAll()"><i>⌖</i>관광지</div><div class="chip" onclick="showCourse()"><i>◇</i>추천코스</div><div class="chip" onclick="showCity()"><i>▣</i>시티투어</div><div class="chip" onclick="showInfo()"><i>◎</i>해설사</div>
+</div></section>
+
+<section><div class="route"><small>2026 OFFICIAL CITY TOUR</small><h3>태백의 자연과 시간을 만나는 하루</h3><div class="stop"><span>태백역 → 검룡소</span><span>10:00</span></div><div class="stop"><span>통리장 · 오로라파크</span><span>12:00</span></div><div class="stop"><span>석탄박물관 → 구문소</span><span>14:00</span></div><div class="stop"><span>철암역사촌 → 태백역</span><span>16:30</span></div></div></section>
+
+<section><div class="info"><b>태백 시티투어</b><br>2026.05.05 ~ 12.31 · 태백역 앞 출발<br>대인 6,000원 · 초중고 3,000원 · 7세 이하 무료<br>예약: 태백관광 홈페이지 / 033-550-2828</div></section>
+</main>
+
+<section class="detail" id="detail"></section>
+<nav><button class="active" onclick="home()"><span>⌂</span>홈</button><button onclick="showAll()"><span>⌖</span>관광지</button><button onclick="showCourse()"><span>◇</span>여행코스</button><button onclick="showCity()"><span>▣</span>시티투어</button></nav>
+</div>
+
+<script>
+const places=[
+['태백산국립공원','천제단길 166','산과 자연'],
+['황지연못','황지연못길 12','자연과 이야기'],
+['구문소','동태백로 11','지질 명소'],
+['검룡소첫물지리생태원','창죽동 147','자연생태'],
+['용연동굴','태백로 283-29','자연 석회동굴'],
+['지지리골 자작나무숲','황지동 733-2','숲길'],
+['석탄박물관','천제단길 195','산업과 역사'],
+['철암탄광역사촌','철암동 일대','탄광 생활사'],
+['365세이프타운','평화길 9','체험관광']
+];
+function hide(){document.getElementById('home').style.display='none';document.getElementById('detail').style.display='block'}
+function home(){document.getElementById('home').style.display='block';document.getElementById('detail').style.display='none'}
+function detail(n,a,d,u){hide();document.getElementById('detail').innerHTML=`<button class="back" onclick="home()">‹ 돌아가기</button><div class="detailBox"><h2>${n}</h2><p>${d}</p><p>📍 ${a}</p><a href="${u}" target="_blank">태백관광 공식 정보 보기 ↗</a></div>`}
+function showAll(){hide();document.getElementById('detail').innerHTML='<button class="back" onclick="home()">‹ 홈으로</button><div class="detailBox"><h2>태백 관광지</h2>'+places.map(p=>`<p><b>${p[0]}</b><br>${p[2]} · ${p[1]}</p>`).join('')+'</div>'}
+function showCourse(){hide();document.getElementById('detail').innerHTML='<button class="back" onclick="home()">‹ 홈으로</button><div class="detailBox"><h2>추천 여행코스</h2><p><b>시간여행 ON</b><br>철암역두선탄시설 → 철암탄광역사촌 → 석탄박물관</p><p><b>2026 시티투어</b><br>태백역 → 검룡소 → 통리장·오로라파크 → 석탄박물관 → 구문소 → 철암역사촌 → 태백역</p><a href="https://tour.taebaek.go.kr/tour/together/citytour" target="_blank">시티투어 공식 안내 ↗</a></div>'}
+function showCity(){hide();document.getElementById('detail').innerHTML='<button class="back" onclick="home()">‹ 홈으로</button><div class="detailBox"><h2>시티투어 & 관광택시</h2><p>2026년 시티투어는 5월 5일부터 12월 31일까지 운영됩니다. 태백역 앞에서 출발하며 사전예약제로 운영됩니다.</p><p>대인 6,000원 · 초중고 3,000원 · 7세 이하 무료</p><p>관광안내소 033-550-2828</p><a href="https://tour.taebaek.go.kr/tour/together/citytour" target="_blank">예약·공식 안내 ↗</a></div>'}
+function showInfo(){hide();document.getElementById('detail').innerHTML='<button class="back" onclick="home()">‹ 홈으로</button><div class="detailBox"><h2>문화관광해설</h2><p>용연동굴, 석탄박물관, 자연사박물관, 365세이프타운, 황지연못, 철암탄광역사촌, 체험공원 등 7개소에 해설사가 배치되어 있습니다.</p><p>근무시간 10:00~17:00 · 해설 약 1~1.5시간</p><a href="https://tour.taebaek.go.kr/tour/together/help/commentator" target="_blank">해설 신청 공식 안내 ↗</a></div>'}
+</script>
+<div style="font-size:9px;color:#8b877e;text-align:center;padding:10px 16px 18px;">관광정보 출처: 태백시 공식 관광 홈페이지 · 일부 운영정보는 변경될 수 있습니다.</div></body></html>
