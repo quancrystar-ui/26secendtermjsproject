@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>나라는 원석 — 나의 역사</title>
+<style>
+:root{--bg:#f6f1e9;--fg:#2b2433;--lead:#2b2433;--mut:#7a6f85;--box:#fff8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17131d;--fg:#efe8f5;--lead:#0c0a10;--mut:#9d90ab;--box:#fff1}}
+:root[data-theme="dark"]{--bg:#17131d;--fg:#efe8f5;--lead:#0c0a10;--mut:#9d90ab;--box:#fff1}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Serif KR","Apple SD Gothic Neo",serif;text-align:center}
+h1{font-size:1.3rem;margin:18px 0 2px;font-weight:600}
+p.sub{margin:0 0 6px;color:var(--mut);font-size:.85rem}
+svg{width:100%;max-width:820px;height:auto;display:block;margin:0 auto}
+.w{stroke:var(--lead);stroke-width:3;cursor:pointer;transition:filter .2s}
+.w:hover{filter:brightness(1.25)}
+text{font-family:inherit;fill:var(--fg);pointer-events:none}
+.slot{cursor:pointer}
+#tip{min-height:48px;margin:6px auto 0;max-width:520px;padding:8px 14px;font-size:.95rem}
+.lg{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:.78rem;color:var(--mut);padding:4px 12px 28px}
+.lg i{display:inline-block;width:10px;height:10px;margin-right:4px;border-radius:2px}
+#pv{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#0006;z-index:9}
+#pv img{max-width:min(86vw,760px);max-height:76vh;border:6px solid #fff;border-radius:6px;box-shadow:0 10px 40px #0008;background:#fff}
+#pv .b{display:none;gap:8px}#pv button{font:inherit;padding:6px 14px;border-radius:16px;border:0;background:#fff;color:#2b2433;cursor:pointer}
+[hidden]{display:none!important}#ex{font:inherit;margin:4px 0;padding:6px 16px;border-radius:18px;border:1px solid var(--mut);background:var(--box);color:var(--fg);cursor:pointer}
+</style></head><body>
+<h1>나라는 원석</h1>
+<p class="sub">1988.6.23 — 조각들이 모여 하나의 장면이 되다 · 조각을 누르면 설명 · 바깥 원에 올리면 사진 확대 · 누르면 사진 추가/교체</p>
+<svg id="s" viewBox="-100 -100 1200 1200" role="img" aria-label="생애 원형 시각화"></svg>
+<div><button id="ex" hidden>사진 포함해서 저장하기 (HTML)</button></div>
+<div id="tip">조각 위에 마우스를 올리거나 눌러 보세요.</div>
+<div class="lg">
+<span><i style="background:#8e6bbf"></i>스테인드글라스</span>
+<span><i style="background:#b9794a"></i>목공</span>
+<span><i style="background:#e0a45a"></i>베이킹</span>
+<span>안쪽 고리: 머문 곳 · 바깥 고리: 하던 일 · 마름모: 사건</span></div>
+<div id="pv"><img alt=""><div class="b"><button id="bc">바꾸기</button><button id="bd">삭제</button><button id="bx">닫기</button></div></div>
+<input type="file" id="f" accept="image/*" hidden>
+<script>
+const SRC='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+const NS="http://www.w3.org/2000/svg",svg=document.getElementById('s'),tip=document.getElementById('tip');
+const Y0=1988.47,Y1=2024,C=500,P=Math.PI;
+const E=y=>y+1.2*Math.min(Math.max(y-2014,0),3);// 서울(2014~2017)을 넓게
+const A=y=>-P/2+(E(y)-E(Y0))/(E(Y1)-E(Y0))*2*P;
+const pol=(r,a)=>[C+r*Math.cos(a),C+r*Math.sin(a)];
+const el=(t,at,par=svg)=>{const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);par.appendChild(e);return e};
+function wedge(r0,r1,a0,a1){const g=.006,[x1,y1]=pol(r1,a0+g),[x2,y2]=pol(r1,a1-g),[x3,y3]=pol(r0,a1-g),[x4,y4]=pol(r0,a0+g),L=(a1-a0)>P?1:0;
+return`M${x1} ${y1}A${r1} ${r1} 0 ${L} 1 ${x2} ${y2}L${x3} ${y3}A${r0} ${r0} 0 ${L} 0 ${x4} ${y4}Z`}
+// 안쪽 고리: 머문 곳
+const places=[[1988.47,1993,'인천','#6fa8c9','출생'],[1993,1994,'대구','#e0a45a','이사'],[1994,2007.2,'구미','#7fb98a','초·중·고 시절'],
+[2007.2,2011,'대전','#a47fcf','대학 입학'],[2011,2012,'인천','#6fa8c9','인턴'],[2012,2013,'대전','#a47fcf','항공우주연구원'],
+[2013,2014,'베를린','#d9667a','독일'],[2014,2017,'서울','#e08a5a','유학원 근무 · 결혼 · 첫째 출산까지'],
+[2017,2022,'춘천','#4fb3b3','큰아이·둘째와 함께'],[2022,2024,'원주','#c9b458','이사']];
+// 바깥 고리: 하던 일
+const works=[[1988.47,1995.2,'유년','#9bb7d4'],[1995.2,2007.2,'학생','#8fc79a'],[2007.2,2011,'대학 · 영어공부방/학원/과외','#b48fe0'],
+[2011,2011.85,'환경공단 인턴','#5fb7a8'],[2012,2013,'항공우주연구원','#6d8fe0'],[2013,2014,'베를린','#e07a8f'],[2014,2015,'유학원','#e0a45a'],[2015,2024,'결혼 · 가족 · 만드는 사람','#c07fb8']];
+function ring(data,r0,r1,kind){data.forEach(d=>{const[a,b,n,c,m]=d,p=el('path',{d:wedge(r0,r1,A(a),A(b)),fill:c,class:'w'});
+ const yr=Math.floor(a),y2=Math.ceil(b-.01);const info=`<b>${n}</b> · ${yr}–${y2>2026?'현재':y2} ${m?'· '+m:''} <span style="color:var(--mut)">(${kind})</span>`;
+ p.addEventListener('mouseenter',()=>tip.innerHTML=info);p.addEventListener('click',()=>tip.innerHTML=info);
+ if(b-a>.9){const am=A((a+b)/2),[x,y]=pol((r0+r1)/2,am);let rot=am*180/P+90;if(Math.sin(am)<0&&false)rot+=0;
+  const t=el('text',{x,y,'font-size':b-a>3?15:12,'text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(${(rot>90&&rot<270)?rot+180:rot} ${x} ${y})`},svg);t.textContent=n.length>9&&b-a<4?n.slice(0,6)+'…':n}})}
+ring(places,130,235,'머문 곳');ring(works,240,330,'하던 일');
+// 사건 마름모
+[[1988.47,'출생',0],[1995.2,'초등학교 입학'],[2007.2,'대학 입학'],[2013.5,'베를린'],[2015.5,'결혼'],[2016.5,'큰아이 출산'],[2018.5,'둘째 출산'],[2022.5,'원주 이사']].forEach(([y,n])=>{
+ const a=A(y),[x,yy]=pol(345,a),d=el('path',{d:`M${x} ${yy-9}L${x+7} ${yy}L${x} ${yy+9}L${x-7} ${yy}Z`,fill:'#ffd36b',stroke:'var(--lead)','stroke-width':2,class:'w'});
+ d.addEventListener('mouseenter',()=>tip.innerHTML=`◆ <b>${n}</b> · ${Math.floor(y)}`);d.addEventListener('click',()=>tip.innerHTML=`◆ <b>${n}</b> · ${Math.floor(y)}`);
+ const[tx,ty]=pol(368,a);el('text',{x:tx,y:ty,'font-size':11,'text-anchor':'middle','dominant-baseline':'middle'}).textContent=Math.floor(y)});
+// 원석
+const g=el('circle',{cx:C,cy:C,r:118,fill:'#a47fcf',opacity:.18});
+const O=[],I=[];for(let k=0;k<8;k++){O.push(pol(98,k*P/4-P/2));I.push(pol(52,k*P/4-P/2+P/8))}
+for(let k=0;k<8;k++){const n=(k+1)%8,L=44+((k*7)%5)*5;
+ el('polygon',{points:[O[k],O[n],I[k]].join(' '),fill:`hsl(${268+k*6} 60% ${L}%)`,stroke:'var(--lead)','stroke-width':2.5});
+ el('polygon',{points:[I[k],I[n],O[n]].join(' '),fill:`hsl(${285-k*5} 55% ${62-((k*3)%4)*6}%)`,stroke:'var(--lead)','stroke-width':2.5})}
+el('polygon',{points:I.join(' '),fill:'#f3e8ff',stroke:'var(--lead)','stroke-width':2.5});
+el('text',{x:C,y:C+1,'font-size':20,'text-anchor':'middle','dominant-baseline':'middle',style:'fill:#3b2a55;font-weight:700'}).textContent='SIA';
+// 사진 슬롯 12개 (브라우저에 저장되어 새로고침해도 유지)
+const cats=[['스테인드글라스','#8e6bbf'],['목공','#b9794a'],['베이킹','#e0a45a']];
+const f=document.getElementById('f'),pv=document.getElementById('pv'),pimg=pv.querySelector('img'),pb=pv.querySelector('.b');
+let cur=null,locked=false,db=null;const slots=[];
+function show(s,l){cur=s;pimg.src=s.src;pv.style.display='flex';pv.style.pointerEvents=l?'auto':'none';pb.style.display=l?'flex':'none';locked=l}
+function hide(){pv.style.display='none';locked=false}
+function save(i,v){try{const o=db.transaction('p','readwrite').objectStore('p');v?o.put(v,i):o.delete(i)}catch(e){}}
+function put(s,src){if(s.img)s.img.remove();s.src=src;
+ s.img=el('image',{href:src,x:s.x-46,y:s.y-46,width:92,height:92,'clip-path':`url(#c${s.i})`,preserveAspectRatio:'xMidYMid slice'},s.g);
+ s.ring.setAttribute('stroke-dasharray','0');s.ring.setAttribute('fill-opacity',0);s.ring.setAttribute('stroke-width',4);s.g.appendChild(s.ring);s.lab.style.display='none'}
+function clear(s){if(s.img)s.img.remove();s.img=null;s.src=null;s.ring.setAttribute('stroke-dasharray','6 5');s.ring.setAttribute('fill-opacity',.18);s.ring.setAttribute('stroke-width',3);s.lab.style.display=''}
+for(let i=0;i<30;i++){const o=i>=12,k=o?i-12:i,N=o?18:12,a=-P/2+(k+.5)/N*2*P,[x,y]=pol(o?545:440,a),[n,c]=cats[o?Math.floor(k/6):Math.floor(k/4)];
+ el('circle',{cx:x,cy:y,r:46},el('clipPath',{id:'c'+i}));
+ const g=el('g',{class:'slot'}),ring=el('circle',{cx:x,cy:y,r:46,fill:c,'fill-opacity':.18,stroke:c,'stroke-width':3,'stroke-dasharray':'6 5'},g),
+ lab=el('text',{x,y:y+4,'font-size':11,'text-anchor':'middle'},g);lab.textContent='+ '+n;
+ const s={i,x,y,g,ring,lab,img:null,src:null};slots.push(s);
+ g.addEventListener('mouseenter',()=>{if(s.src&&!locked)show(s,false)});
+ g.addEventListener('mouseleave',()=>{if(!locked)hide()});
+ g.addEventListener('click',()=>{cur=s;if(s.src)show(s,true);else f.click()})}
+document.getElementById('bc').onclick=()=>f.click();
+document.getElementById('bd').onclick=()=>{clear(cur);save(cur.i,null);hide()};
+document.getElementById('bx').onclick=hide;
+pv.addEventListener('click',e=>{if(e.target===pv)hide()});
+f.onchange=()=>{const file=f.files[0];if(!file||!cur)return;const im=new Image(),u=URL.createObjectURL(file),s=cur;
+ im.onload=()=>{const k=Math.min(1,1200/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;
+  cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(u);const d=cv.toDataURL('image/jpeg',.85);
+  put(s,d);save(s.i,d);if(locked)show(s,true)};im.src=u;f.value=''};
+try{const q=indexedDB.open('gem-photos',1);q.onupgradeneeded=()=>q.result.createObjectStore('p');
+ q.onsuccess=()=>{db=q.result;slots.forEach(s=>{try{const r=db.transaction('p').objectStore('p').get(s.i);r.onsuccess=()=>r.result&&put(s,r.result)}catch(e){}})}}catch(e){}
+const ex=document.getElementById('ex');
+if(window.__PHOTOS)for(const k in window.__PHOTOS)if(slots[+k])put(slots[+k],window.__PHOTOS[k]);
+try{window.claude&&claude.use&&claude.use('downloads').then(d=>{if(!d)return;ex.hidden=false;ex.onclick=async()=>{
+ const m={};slots.forEach(s=>{if(s.src)m[s.i]=s.src});
+ const base=SRC.replace(/<script>window\.__PHOTOS=[\s\S]*?<\/script>/,'');
+ const html=base.replace('<input type="file"',()=>'<script>window.__PHOTOS='+JSON.stringify(m)+'<\/script><input type="file"');
+ try{await d.save({filename:'my-history-gem.html',data:new Blob([html],{type:'text/html'})});tip.textContent='저장했어요. 이 파일을 열면 사진이 함께 보여요.'}
+ catch(e){tip.textContent=e&&e.code==='declined'?'저장을 취소했어요.':'저장하지 못했어요.'}}})}catch(e){}
+</script></body></html>
