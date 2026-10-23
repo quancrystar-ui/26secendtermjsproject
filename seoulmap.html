@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>서울 교육 환경 지도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F2F8;--surface:#FFFFFF;--ink:#1D1B2E;--muted:#6A6780;--line:#DAD7E9;
+  --c1:#E1DDF1;--c2:#BDB5E0;--c3:#9487CC;--c4:#6451AE;--c5:#3A2380;
+  --pa1:var(--c1);--pa2:var(--c2);--pa3:var(--c3);--pa4:var(--c4);--pa5:var(--c5);
+  --pb1:#C9E8E5;--pb2:#9FD8D2;--pb3:#5DB8B0;--pb4:#1F837E;--pb5:#0B4F4B;
+  --pc1:#F8DDB0;--pc2:#F5C97F;--pc3:#E8A23D;--pc4:#B8681A;--pc5:#7A3E08;
+  --t1:#1D1B2E;--t2:#1D1B2E;--t3:#14122A;--t4:#FFFFFF;--t5:#FFFFFF;
+  --b1:#E8E8E8;--b2:#DFB0D6;--b3:#BE64AC;--b4:#ACE4E4;--b5:#A5ADD3;--b6:#8C62AA;--b7:#5AC8C8;--b8:#5698B9;--b9:#3B4994;
+  --font:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#14131C;--surface:#1D1B29;--ink:#ECEAF6;--muted:#A19DBA;--line:#34304B;
+--c1:#2B2942;--c2:#443F7D;--c3:#6A5FB8;--c4:#9D8FE0;--c5:#D6CCFF;
+--t1:#ECEAF6;--t2:#ECEAF6;--t3:#FFFFFF;--t4:#14122A;--t5:#14122A;
+--b1:#2D2C3A;--b2:#8A5C9E;--b3:#C07AD4;--b4:#3E8A8E;--b5:#7C8FC0;--b6:#A98AE0;--b7:#5ED0CF;--b8:#78B4DE;--b9:#9CA3FF;
+--pb1:#1E3A3A;--pb2:#2C6B68;--pb3:#3F9E99;--pb4:#6FCFC8;--pb5:#B5F0EA;
+--pc1:#3D2E17;--pc2:#7A5521;--pc3:#B87F2B;--pc4:#E3A64A;--pc5:#FFD995; }
+}
+:root[data-theme="dark"]{ --bg:#14131C;--surface:#1D1B29;--ink:#ECEAF6;--muted:#A19DBA;--line:#34304B;
+--c1:#2B2942;--c2:#443F7D;--c3:#6A5FB8;--c4:#9D8FE0;--c5:#D6CCFF;
+--t1:#ECEAF6;--t2:#ECEAF6;--t3:#FFFFFF;--t4:#14122A;--t5:#14122A;
+--b1:#2D2C3A;--b2:#8A5C9E;--b3:#C07AD4;--b4:#3E8A8E;--b5:#7C8FC0;--b6:#A98AE0;--b7:#5ED0CF;--b8:#78B4DE;--b9:#9CA3FF;
+--pb1:#1E3A3A;--pb2:#2C6B68;--pb3:#3F9E99;--pb4:#6FCFC8;--pb5:#B5F0EA;
+--pc1:#3D2E17;--pc2:#7A5521;--pc3:#B87F2B;--pc4:#E3A64A;--pc5:#FFD995; }
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--ink);outline-offset:2px}
+
+.page{max-width:1200px;margin:0 auto;padding:28px 20px 40px}
+header{max-width:760px;margin-bottom:22px}
+h1{margin:0 0 20px;font-size:clamp(26px,4.6vw,40px);line-height:1.18;font-weight:700;letter-spacing:-.02em;word-break:keep-all}
+.lede{margin:0 0 6px;color:var(--muted);font-size:15px;word-break:keep-all}
+.mtitle{margin:0 0 6px;font-size:clamp(18px,3vw,22px);font-weight:700;letter-spacing:-.01em;word-break:keep-all}
+.insight{margin:0;font-size:16px;font-weight:500;word-break:keep-all}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:22px;align-items:start}
+.mapwrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.tab{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:500}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+#map{display:block;width:100%;height:auto;touch-action:manipulation}
+.cell{stroke:var(--surface);stroke-width:1.3px;vector-effect:non-scaling-stroke;stroke-linejoin:round;cursor:pointer;transition:opacity .15s,fill .25s}
+.cell[data-c="1"]{fill:var(--c1)}.cell[data-c="2"]{fill:var(--c2)}.cell[data-c="3"]{fill:var(--c3)}
+.cell[data-c="4"]{fill:var(--c4)}.cell[data-c="5"]{fill:var(--c5)}
+.cell:focus{outline:none}
+.dim{opacity:.16}
+#hl{fill:none;stroke:var(--ink);stroke-width:3px;vector-effect:non-scaling-stroke;stroke-linejoin:round;pointer-events:none}
+.lbl{pointer-events:none;text-anchor:middle;transition:opacity .15s}
+.lbl .n{font-weight:700}.lbl .v{font-weight:400}
+.lbl[data-c="1"]{fill:var(--t1)}.lbl[data-c="2"]{fill:var(--t2)}.lbl[data-c="3"]{fill:var(--t3)}
+.lbl[data-c="4"]{fill:var(--t4)}.lbl[data-c="5"]{fill:var(--t5)}
+
+.chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px}
+.chips .cap{font-size:13px;color:var(--muted);margin-right:2px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:8px;padding:4px 11px;font-size:13px}
+.chip[aria-pressed="true"]{border-color:var(--ink);font-weight:700}
+.chips .sep{width:1px;height:18px;background:var(--line);margin:0 4px}
+.sub{margin:14px 0 4px;font-size:13px;color:var(--muted);font-weight:500}
+.rows.tight li{padding:6px 0;font-size:13.5px}
+
+.doms{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:0 0 10px;overflow-x:auto;scrollbar-width:none}
+.dom{white-space:nowrap;flex:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:transparent;color:var(--muted);padding:8px 14px;font-size:15px;font-weight:500}
+.dom[aria-pressed="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--ink)}
+.jumps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.jumps button{width:100%;display:grid;grid-template-columns:4.4em 1fr auto;gap:10px;align-items:baseline;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;padding:8px 0;font-size:13.5px;font-variant-numeric:tabular-nums}
+.jumps button[aria-current="true"]{font-weight:700}
+.jumps .dm{color:var(--muted);font-weight:400}
+
+[hidden]{display:none!important}
+#map[data-mode="rel"] .cell[data-c="1"]{fill:var(--b1)}#map[data-mode="rel"] .cell[data-c="2"]{fill:var(--b2)}
+#map[data-mode="rel"] .cell[data-c="3"]{fill:var(--b3)}#map[data-mode="rel"] .cell[data-c="4"]{fill:var(--b4)}
+#map[data-mode="rel"] .cell[data-c="5"]{fill:var(--b5)}#map[data-mode="rel"] .cell[data-c="6"]{fill:var(--b6)}
+#map[data-mode="rel"] .cell[data-c="7"]{fill:var(--b7)}#map[data-mode="rel"] .cell[data-c="8"]{fill:var(--b8)}
+#map[data-mode="rel"] .cell[data-c="9"]{fill:var(--b9)}
+#map[data-mode="rel"] .lbl{fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:calc(3px / var(--k,1));stroke-linejoin:round}
+.biv{display:grid;grid-template-columns:auto auto;grid-template-areas:"y grid" ". x";gap:6px 8px;justify-content:start;margin-top:8px;align-items:stretch}
+.bv-y{grid-area:y;display:flex;flex-direction:column;justify-content:space-between;font-size:12px;color:var(--muted);text-align:right}
+.bv-x{grid-area:x;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);gap:12px}
+.bv-grid{grid-area:grid;display:grid;grid-template-columns:repeat(3,44px);grid-auto-rows:34px;gap:3px}
+.bv{border:1px solid var(--line);border-radius:5px;padding:0;font-size:12px;font-weight:500;color:var(--ink)}
+.bv span{background:var(--surface);color:var(--ink);border-radius:999px;padding:1px 7px}
+.bv[aria-pressed="true"]{outline:2.5px solid var(--ink);outline-offset:1px}
+.bv[data-c="1"]{background:var(--b1)}.bv[data-c="2"]{background:var(--b2)}.bv[data-c="3"]{background:var(--b3)}
+.bv[data-c="4"]{background:var(--b4)}.bv[data-c="5"]{background:var(--b5)}.bv[data-c="6"]{background:var(--b6)}
+.bv[data-c="7"]{background:var(--b7)}.bv[data-c="8"]{background:var(--b8)}.bv[data-c="9"]{background:var(--b9)}
+.bvnote{margin:6px 0 0;font-size:12.5px;color:var(--muted);word-break:keep-all}
+#sc{display:block;width:100%;height:auto;margin:8px 0 4px}
+#sc .grid{stroke:var(--line);stroke-width:1}
+#sc .axis{stroke:var(--muted);stroke-width:1}
+#sc text{fill:var(--muted);font-size:11px}
+#sc .trend{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+#sc .pt{stroke:var(--ink);stroke-width:1;cursor:pointer;transition:r .12s}
+#sc .pt.hot{stroke-width:2.5}
+#sc .pt:focus{outline:none;stroke-width:2.5}
+#sc #sclbl{fill:var(--ink);font-size:12.5px;font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+.reading{color:var(--ink)!important}
+
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:8px}
+.sel{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+.sel select{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 8px;width:100%}
+#stage{position:relative;width:100%;height:clamp(340px,56vw,540px);border-radius:10px;overflow:hidden;background:var(--bg)}
+#stage canvas{display:block;width:100%;height:100%;cursor:grab}
+#stagelabels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.sl{position:absolute;left:0;top:0;font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;text-shadow:0 0 3px var(--surface),0 0 3px var(--surface),0 0 3px var(--surface)}
+.sl.on{font-size:13px}
+.viewbtns{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 0}
+.viewbtns .cap{font-size:13px;color:var(--muted);margin-right:2px}
+.clegend .legend{margin-top:8px}
+.clegend p{margin:4px 0;font-size:12.5px;color:var(--muted);word-break:keep-all}
+.dot3{display:inline-block;width:11px;height:11px;border-radius:50%;background:#F0A830;border:1px solid var(--line);vertical-align:-1px;margin-right:4px}
+
+
+.mapbox{position:relative}
+#map{cursor:grab;user-select:none;-webkit-user-select:none}
+.zbar{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:4px;z-index:2}
+.zbar button{width:36px;height:36px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;font-size:18px;line-height:1;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.zbar button.txt{font-size:12px;font-weight:500}
+.tip{position:absolute;z-index:3;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12.5px;line-height:1.45;box-shadow:0 3px 10px rgba(0,0,0,.14);max-width:230px;word-break:keep-all;font-variant-numeric:tabular-nums}
+.zhint{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.lbl .r{font-weight:400;opacity:.85}
+
+#ov{position:relative}
+#ov .ovwrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+#ovgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:4px}
+.ovp{min-width:0}
+.ovh{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ovh .g{font-size:15px;font-weight:700;white-space:nowrap}
+.ovh select{flex:1;min-width:0;font:inherit;font-size:12.5px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 6px}
+.ovp svg{display:block;width:100%;height:auto}
+.ovp .hl{fill:none;stroke:var(--ink);stroke-width:2.5px;vector-effect:non-scaling-stroke;stroke-linejoin:round;pointer-events:none}
+.ovp .cell{stroke-width:1px}
+.ovl{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.ovl .ramp{display:flex;gap:2px;flex:1;max-width:150px}
+.ovl .ramp .sw{flex:1;width:auto;height:10px;border-radius:3px}
+i.sw{display:inline-block}
+.ovd{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.ovn{font-size:20px;font-weight:700;margin-bottom:6px}
+.ovcols{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.ovc .gg{font-size:12px;color:var(--muted)}
+.ovc .tt{font-size:12.5px;word-break:keep-all}
+.ovc .vv{font-size:26px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.ovc .rr{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.gaprow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.gaprow .cap{font-size:13px;color:var(--muted);margin-right:2px}
+#ovextra{margin-top:10px}
+@media (max-width:900px){
+  #ovgrid{grid-template-columns:minmax(0,1fr)}
+}
+
+[data-p="a"] .cell[data-c="1"],[data-p="a"] .sw[data-c="1"]{fill:var(--pa1);background:var(--pa1)}
+[data-p="a"] .cell[data-c="2"],[data-p="a"] .sw[data-c="2"]{fill:var(--pa2);background:var(--pa2)}
+[data-p="a"] .cell[data-c="3"],[data-p="a"] .sw[data-c="3"]{fill:var(--pa3);background:var(--pa3)}
+[data-p="a"] .cell[data-c="4"],[data-p="a"] .sw[data-c="4"]{fill:var(--pa4);background:var(--pa4)}
+[data-p="a"] .cell[data-c="5"],[data-p="a"] .sw[data-c="5"]{fill:var(--pa5);background:var(--pa5)}
+[data-p="b"] .cell[data-c="1"],[data-p="b"] .sw[data-c="1"]{fill:var(--pb1);background:var(--pb1)}
+[data-p="b"] .cell[data-c="2"],[data-p="b"] .sw[data-c="2"]{fill:var(--pb2);background:var(--pb2)}
+[data-p="b"] .cell[data-c="3"],[data-p="b"] .sw[data-c="3"]{fill:var(--pb3);background:var(--pb3)}
+[data-p="b"] .cell[data-c="4"],[data-p="b"] .sw[data-c="4"]{fill:var(--pb4);background:var(--pb4)}
+[data-p="b"] .cell[data-c="5"],[data-p="b"] .sw[data-c="5"]{fill:var(--pb5);background:var(--pb5)}
+[data-p="c"] .cell[data-c="1"],[data-p="c"] .sw[data-c="1"]{fill:var(--pc1);background:var(--pc1)}
+[data-p="c"] .cell[data-c="2"],[data-p="c"] .sw[data-c="2"]{fill:var(--pc2);background:var(--pc2)}
+[data-p="c"] .cell[data-c="3"],[data-p="c"] .sw[data-c="3"]{fill:var(--pc3);background:var(--pc3)}
+[data-p="c"] .cell[data-c="4"],[data-p="c"] .sw[data-c="4"]{fill:var(--pc4);background:var(--pc4)}
+[data-p="c"] .cell[data-c="5"],[data-p="c"] .sw[data-c="5"]{fill:var(--pc5);background:var(--pc5)}
+body[data-dom="public"]{--c1:var(--pb1);--c2:var(--pb2);--c3:var(--pb3);--c4:var(--pb4);--c5:var(--pb5)}
+body[data-dom="path"]{--c1:var(--pc1);--c2:var(--pc2);--c3:var(--pc3);--c4:var(--pc4);--c5:var(--pc5)}
+.ovl{display:block}
+.ovl .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ovl .ovb{margin-top:2px;font-size:11.5px;color:var(--muted)}
+.ovx{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 16px 14px}
+.dstrip{display:block;width:100%;height:30px;margin:4px 0 2px}
+.dstrip .ln{stroke:var(--line);stroke-width:2}
+.dstrip .dt{fill:var(--muted);opacity:.55}
+.dstrip .tk{stroke:var(--ink);stroke-width:1.5}
+.dstrip .sel{stroke:var(--ink);stroke-width:2}
+.dstrip text{fill:var(--muted);font-size:9px}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:8px}
+.lg{display:flex;align-items:center;gap:7px;border:1px solid transparent;background:transparent;border-radius:8px;padding:4px 8px;font-size:13px}
+.lg[aria-pressed="true"]{border-color:var(--ink)}
+.sw{width:18px;height:18px;border-radius:5px;border:1px solid var(--line);flex:none}
+.sw[data-c="1"]{background:var(--c1)}.sw[data-c="2"]{background:var(--c2)}.sw[data-c="3"]{background:var(--c3)}
+.sw[data-c="4"]{background:var(--c4)}.sw[data-c="5"]{background:var(--c5)}
+.lg small{color:var(--muted);font-size:12px}
+
+.panel{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.card h2{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.big{display:flex;align-items:baseline;gap:8px;margin:2px 0 10px}
+.big b{font-size:44px;line-height:1.1;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.big span{color:var(--muted);font-size:14px}
+.rows{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.rows li{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+.rows li.cur{font-weight:700}
+.rows .rk{color:var(--muted);min-width:3.4em;text-align:right;font-weight:400}
+.note{margin:10px 0 0;font-size:13.5px;color:var(--muted);word-break:keep-all}
+.reset{margin-top:10px;border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 11px;font-size:13px}
+
+.rank{list-style:none;margin:0;padding:0;display:grid;grid-auto-flow:column;grid-template-rows:repeat(13,auto);gap:0 14px}
+.rank button{width:100%;display:grid;grid-template-columns:1.7em 12px 1fr auto;align-items:center;gap:7px;border:0;background:transparent;text-align:left;padding:5px 4px;border-radius:6px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.rank button:hover,.rank button.on{background:var(--bg)}
+.rank .r{color:var(--muted);text-align:right}
+.rank .dot{width:12px;height:12px;border-radius:4px;border:1px solid var(--line)}
+.rank .dot[data-c="1"]{background:var(--c1)}.rank .dot[data-c="2"]{background:var(--c2)}.rank .dot[data-c="3"]{background:var(--c3)}
+.rank .dot[data-c="4"]{background:var(--c4)}.rank .dot[data-c="5"]{background:var(--c5)}
+.rank-card h3{margin:0 0 8px;font-size:14px;font-weight:500;color:var(--muted)}
+
+footer{margin-top:22px;color:var(--muted);font-size:12.5px;max-width:760px;word-break:keep-all}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static}
+}
+@media (max-width:440px){
+  .dom{padding:8px 7px;font-size:14px}
+  .page{padding:20px 12px 32px}
+  .mapwrap{padding:10px 8px}
+  .big b{font-size:38px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- 지도 중심 레이아웃: 좌측 세로 메뉴 / 큰 지도 / 하단 좌측 작은 정보 ---- */
+.page{max-width:1480px;padding:18px 16px 28px}
+h1{margin:0 0 12px;font-size:clamp(22px,3.4vw,30px)}
+.shell{display:grid;grid-template-columns:128px minmax(0,1fr);gap:18px;align-items:start}
+.main{min-width:0}
+.side{display:flex;flex-direction:column;gap:2px;position:sticky;top:16px}
+.side .dom{width:100%;text-align:left;margin:0;padding:8px 12px;border:0;border-left:3px solid transparent;border-radius:0 8px 8px 0;font-size:14px;white-space:normal;word-break:keep-all;color:var(--muted)}
+.side .dom:hover{background:var(--surface);color:var(--ink)}
+.side .dom[aria-pressed="true"]{background:var(--surface);border-left-color:var(--ink);color:var(--ink);font-weight:700}
+.layout{display:block}
+#ovgrid{display:block;margin-top:0}
+.mapwrap,#ov .ovwrap{padding:8px 8px 6px}
+.zhint{display:none}
+#mapbox,.ovbox,.ovfoot{position:relative;width:100%;max-width:max(560px,calc((100vh - 190px)*1.209));margin:0 auto}
+.ovh{flex-wrap:wrap;margin-bottom:6px}
+#relcard{max-width:460px;margin-top:10px}
+.dock{position:absolute;left:6px;bottom:6px;z-index:3;width:min(270px,36%);padding:7px 10px;border-radius:10px;background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.1);font-size:12px;line-height:1.4}
+.dock:empty{display:none}
+.dock h2,.dock .ovn{font-size:14.5px;margin:0 0 3px;font-weight:700}
+.dock .rows li{padding:3px 0;font-size:12px;gap:8px}
+.dock .reset{margin-top:4px;padding:2px 8px;font-size:11.5px}
+.dock .ovc{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:baseline;padding:3px 6px;border:1px solid transparent;border-radius:6px;cursor:pointer}
+.dock .ovc.on{border-color:var(--ink);background:var(--bg)}
+.dock .ovc .gg{font-size:11.5px;color:var(--muted)}
+.dock .ovc .vv{font-size:15px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.dock .ovc .rr{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.dock .sw{width:10px;height:10px;border-radius:3px}
+.ovfoot{display:flex;align-items:flex-start;gap:14px;margin-top:8px}
+.ovfoot .dock{position:static;flex:none;width:270px;box-shadow:none;border:1px solid var(--ink)}
+.ovfoot .ovl{flex:1;min-width:0;margin-top:0}
+body[data-dom="combo"] .dock{position:static;width:auto;margin-top:10px;box-shadow:none}
+.stagerow{display:grid;grid-template-columns:236px minmax(0,1fr);gap:14px;align-items:start}
+.stagecol{min-width:0}
+.legcol .legend{flex-direction:column;flex-wrap:nowrap;gap:2px;margin:2px 0 10px}
+.legcol .lg{padding:2px 0}
+.legcol .clegend p{margin:6px 0 2px}
+.bx{display:inline-flex;align-items:center;justify-content:center;width:28px;flex:none}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:12px}
+  .side{flex-direction:row;overflow-x:auto;position:static;border-bottom:1px solid var(--line);scrollbar-width:none}
+  .side .dom{width:auto;flex:none;white-space:nowrap;border-left:0;border-bottom:3px solid transparent;margin-bottom:-1px;border-radius:0;padding:8px 12px}
+  .side .dom[aria-pressed="true"]{background:transparent;border-bottom-color:var(--ink)}
+  .dock{position:static;width:auto;margin-top:8px;box-shadow:none}
+  .stagerow{grid-template-columns:minmax(0,1fr)}
+  .ovfoot{flex-wrap:wrap}
+  .ovfoot .dock{width:100%;margin-top:0}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>서울 교육 환경 지도</h1>
+
+  <div class="shell">
+    <nav class="side" id="doms" role="group" aria-label="영역"></nav>
+    <div class="main">
+      <section id="ov" hidden>
+        <div class="ovwrap"><div id="ovgrid"></div></div>
+        <div class="tip" id="ovtip" hidden></div>
+      </section>
+
+  <div class="layout" id="layout">
+    <section class="mapwrap" aria-label="서울 자치구 지도">
+      <div class="tabs" id="tabs"></div>
+      <div class="chips" id="chips" role="group" aria-label="학원 분류"></div>
+      <div class="chips" id="chips2" role="group" aria-label="진학 유형" hidden></div>
+      <div class="mapbox" id="mapbox">
+        <svg id="map" viewBox="0 0 924 764" role="group" aria-label="서울 자치구별 지도">
+          <g id="vp"><g id="cells"></g><path id="hl" d=""></path><g id="labels"></g></g>
+        </svg>
+        <div class="zbar"><button id="zin" aria-label="확대">+</button><button id="zout" aria-label="축소">−</button><button id="zreset" class="txt" aria-label="전체 보기">전체</button></div>
+        <div class="tip" id="tip" hidden></div>
+        <div class="card dock" id="card" aria-live="polite"></div>
+        <p class="zhint">드래그로 이동하고 스크롤·핀치로 확대해요. 구를 누르면 그 구로 확대됩니다.</p>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div class="card" id="relcard" hidden>
+        <h2>관계 요약</h2>
+        <svg id="sc" viewBox="0 0 420 300" role="group" aria-label="학원 밀도와 진학률 산점도"></svg>
+        <div id="relstats"></div>
+      </div>
+      <div id="combo" hidden>
+        <div class="ctl" id="comboctl"></div>
+        <div class="stagerow">
+          <div class="legcol" id="legcol"><div class="clegend" id="combolegend"></div></div>
+          <div class="stagecol">
+        <div id="stage" role="img" aria-label="서울 자치구 3D 지도: 기둥 높이, 기둥 색, 공 색과 크기로 세 지표를 함께 표시"><div id="stagelabels"></div></div>
+        <div class="viewbtns"><span class="cap">보는 각도</span>
+          <button class="chip vb" data-v="tilt">비스듬히</button><button class="chip vb" data-v="top">정면(위에서)</button><button class="chip vb" data-v="side">옆에서</button><button class="chip" id="xray" aria-pressed="false">투명하게</button><button class="chip" id="autorot" aria-pressed="false">자동 회전</button>
+          <span class="cap">드래그로 돌리고, 스크롤·핀치로 확대해요</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D = [{"name":"강남구","d":"M639.4,479.5L661.7,490.4L660.7,501.7L662.1,504.2L667.8,544.8L677.7,554.6L686.3,556.7L725.8,569.8L737.6,576.0L745.0,581.8L752.3,589.6L759.2,603.1L757.9,606.1L777.0,638.9L780.8,647.4L780.7,652.9L770.3,661.1L768.8,670.8L761.3,666.9L758.6,662.8L746.3,660.1L740.3,668.0L728.9,670.3L724.9,663.1L722.1,657.1L707.6,644.4L699.4,632.1L699.0,624.9L685.8,626.9L676.7,632.1L674.0,626.9L668.7,625.9L666.6,629.3L652.2,632.2L650.2,642.7L639.7,644.2L633.4,643.3L614.5,620.1L606.6,597.6L591.1,600.4L585.7,586.8L561.9,523.8L557.0,502.8L554.4,496.4L543.2,482.9L562.7,463.2L571.1,456.3L581.9,453.0L616.5,470.3L618.6,465.6L623.2,470.1L639.4,479.5Z","e":"M638.4,481.3L622.0,471.7L619.3,469.1L617.5,473.0L581.7,455.1L572.1,458.1L564.0,464.6L545.9,483.0L556.1,495.3L558.9,502.2L563.8,523.2L587.5,586.1L592.3,598.1L607.9,595.4L616.3,619.1L634.5,641.4L639.7,642.1L648.5,640.9L650.5,630.5L665.4,627.5L667.7,623.7L675.3,625.1L677.5,629.3L685.1,625.0L700.9,622.6L701.4,631.4L709.1,643.1L723.7,655.9L726.6,662.2L730.0,668.0L739.2,666.2L745.5,657.9L759.9,661.0L762.7,665.4L767.3,667.8L768.5,660.0L778.7,651.9L778.8,647.8L775.2,639.8L755.7,606.3L757.0,603.2L750.6,590.8L743.6,583.2L736.5,577.7L725.0,571.6L685.7,558.7L676.6,556.4L665.9,545.7L660.2,504.9L658.7,502.1L659.6,491.6Z","cx":612.5,"cy":521.1,"students":60944,"academies":2921,"per10k":479.3,"A":[498,106,307,6,271,1394],"G":[251,108,220,2,175,99],"P":{"kg":[3092,334],"el":[25207,1788],"mid":[18035,1213],"high":[17702,1595]},"E":{"grad":5325,"adm":5304,"gen":3896,"voc":152,"sp":287,"au":909,"oth":60}},{"name":"서초구","d":"M543.2,482.9L554.4,496.4L557.0,502.8L561.9,523.8L585.7,586.8L591.1,600.4L606.6,597.6L614.5,620.1L633.4,643.3L639.7,644.2L650.2,642.7L652.2,632.2L666.6,629.3L668.7,625.9L674.0,626.9L676.7,632.1L685.8,626.9L699.0,624.9L699.4,632.1L707.6,644.4L722.1,657.1L724.9,663.1L721.2,670.3L722.3,676.4L719.1,677.5L716.9,684.1L713.0,686.5L707.8,696.4L707.7,705.6L698.6,710.4L694.7,718.0L678.5,714.7L671.8,716.4L672.5,721.3L678.1,724.5L676.7,729.2L671.5,732.2L669.6,742.4L671.0,745.8L661.2,748.1L658.9,751.1L649.0,748.1L642.2,748.1L629.8,752.3L624.9,747.6L619.9,746.2L617.5,739.0L603.3,725.4L594.8,723.6L593.8,718.1L599.9,708.5L598.3,703.9L599.0,695.9L595.4,689.9L597.4,681.6L596.6,676.2L592.6,671.9L590.0,663.0L592.4,656.6L584.9,651.3L573.8,671.1L561.8,677.4L552.5,679.6L541.5,679.5L537.0,674.1L531.1,661.1L529.0,659.9L525.0,647.3L513.3,647.0L509.7,648.8L511.7,656.3L510.9,661.1L503.1,663.2L493.2,672.1L490.7,665.9L492.2,652.0L489.4,645.7L484.4,640.6L480.1,632.4L478.0,621.8L480.9,568.3L485.6,558.5L477.1,552.3L475.3,547.6L474.9,525.6L480.0,521.8L490.5,521.3L494.8,524.0L513.4,513.1L525.7,505.0L530.7,499.9L535.1,491.1L543.2,482.9Z","e":"M543.1,485.9L536.8,492.3L532.4,501.1L527.0,506.5L514.5,514.8L494.8,526.3L490.0,523.4L480.7,523.8L477.0,526.6L477.3,547.2L478.8,551.0L488.1,557.8L482.9,568.8L480.1,621.7L482.0,631.7L486.0,639.4L491.1,644.6L494.3,651.7L492.8,665.6L494.0,668.7L502.1,661.4L509.1,659.5L509.6,656.4L507.3,647.7L512.9,645.0L526.5,645.4L530.7,658.5L532.7,659.7L538.8,673.1L542.4,677.5L552.2,677.6L561.1,675.5L572.4,669.6L584.3,648.4L594.8,655.8L592.1,663.1L594.4,670.9L598.5,675.3L599.4,681.7L597.6,689.5L601.0,695.4L600.3,703.7L602.1,708.7L596.0,718.5L596.6,721.9L604.3,723.5L619.2,737.9L621.4,744.5L626.0,745.8L630.3,750.0L641.9,746.1L649.3,746.1L658.2,748.8L660.1,746.3L668.2,744.4L667.5,742.7L669.7,730.9L675.0,727.8L675.7,725.5L670.6,722.5L669.6,714.9L678.4,712.7L693.6,715.8L697.1,709.0L705.7,704.4L705.8,695.9L711.5,685.1L715.2,682.8L717.5,675.9L720.0,675.0L719.1,670.0L722.6,663.1L720.4,658.3L706.1,645.7L697.5,632.7L697.1,627.2L686.5,628.8L675.8,634.9L672.6,628.6L669.7,628.1L667.9,631.1L653.9,633.9L651.9,644.5L639.7,646.2L632.4,645.2L612.8,621.1L605.3,599.9L589.8,602.6L583.8,587.5L560.0,524.4L555.1,503.4L552.7,497.4Z","cx":532.2,"cy":595.2,"students":40292,"academies":1387,"per10k":344.2,"A":[290,58,152,4,149,558],"G":[246,74,134,0,124,44],"P":{"kg":[1793,198],"el":[18746,1264],"mid":[11798,895],"high":[9748,837]},"E":{"grad":3574,"adm":3554,"gen":2362,"voc":105,"sp":175,"au":863,"oth":49}},{"name":"마포구","d":"M309.3,349.8L306.0,353.7L312.8,359.3L345.1,377.4L357.8,381.3L363.3,386.6L360.0,392.9L359.8,398.8L381.9,408.9L390.9,405.3L425.3,402.5L428.8,404.7L434.8,398.8L438.3,405.3L435.3,408.3L436.8,418.7L440.1,423.6L435.8,426.5L432.1,432.8L428.4,435.1L425.5,445.1L412.9,460.0L399.5,463.7L396.3,478.6L377.2,460.1L365.4,458.2L315.9,444.5L304.1,438.7L280.5,422.3L255.0,401.3L230.0,379.7L213.1,369.5L211.0,365.6L211.7,355.9L211.9,353.2L220.2,352.6L224.1,350.5L228.5,353.6L233.7,348.4L239.6,347.5L250.7,342.5L253.3,334.6L252.4,330.2L257.3,323.5L260.2,315.2L264.4,311.7L279.8,328.3L288.0,335.4L292.4,337.4L298.6,346.0L306.1,352.4L309.3,349.8Z","e":"M303.8,353.2L297.1,347.3L291.1,339.0L286.9,337.1L278.4,329.7L264.2,314.4L261.9,316.4L259.1,324.4L254.5,330.7L255.4,334.8L252.3,343.9L240.2,349.4L234.7,350.3L228.7,356.2L224.0,352.8L220.8,354.6L213.7,355.1L213.7,356.1L213.0,365.2L214.6,368.1L231.2,378.0L256.3,399.8L281.7,420.7L305.1,437.0L316.6,442.6L365.9,456.2L378.2,458.2L395.1,474.7L397.8,462.1L411.8,458.2L423.7,444.1L426.7,433.8L430.6,431.4L434.3,425.0L437.3,423.1L434.8,419.4L433.2,407.6L435.8,405.0L434.3,402.1L429.1,407.2L424.8,404.5L391.3,407.3L381.9,411.1L357.8,400.1L358.1,392.4L360.9,387.0L356.8,383.1L344.4,379.3L311.7,361.0L303.2,353.9Z","cx":320.8,"cy":405.6,"students":24217,"academies":818,"per10k":337.8,"A":[285,24,78,3,89,286],"G":[164,37,87,0,99,11],"P":{"kg":[2458,256],"el":[11722,963],"mid":[6939,591],"high":[5556,565]},"E":{"grad":2262,"adm":2254,"gen":1719,"voc":281,"sp":96,"au":141,"oth":17}},{"name":"양천구","d":"M135.1,448.1L145.1,444.8L147.9,435.2L151.6,438.3L152.9,445.2L158.7,444.9L162.9,456.1L161.6,459.5L174.5,486.4L192.6,482.8L225.1,477.6L223.9,459.1L224.5,447.3L221.2,437.6L225.7,419.0L239.5,429.1L246.7,431.1L261.1,428.6L270.6,440.2L272.8,440.2L275.2,440.7L283.8,461.2L284.3,468.5L281.1,476.0L277.8,475.1L274.5,480.7L263.3,487.0L260.6,490.0L259.2,498.2L258.4,512.9L256.2,519.7L245.5,535.3L242.8,543.8L235.9,545.3L229.1,543.4L223.3,544.2L221.8,540.3L216.7,540.3L212.6,531.5L207.0,533.4L201.3,529.8L195.2,531.0L192.2,534.5L184.7,536.7L183.8,543.1L173.6,543.4L174.8,547.6L165.8,551.8L156.5,544.4L150.1,536.2L140.8,536.0L139.1,529.6L140.3,522.6L137.4,514.5L142.4,504.9L141.8,496.5L148.7,486.0L146.2,478.1L142.5,477.4L134.4,464.0L135.1,448.1Z","e":"M137.0,449.5L136.4,463.5L143.8,475.6L147.7,476.4L150.9,486.3L143.9,497.0L144.4,505.4L139.6,514.7L142.4,522.4L141.1,529.6L142.3,534.0L151.1,534.2L157.9,543.0L166.1,549.5L172.4,546.5L170.9,541.5L182.1,541.1L182.9,535.1L191.1,532.8L194.2,529.2L201.6,527.6L207.3,531.2L213.6,529.0L218.0,538.3L223.2,538.3L224.6,542.0L229.3,541.3L235.9,543.3L241.3,542.1L243.7,534.4L254.4,518.8L256.4,512.6L257.2,498.0L258.8,489.1L262.0,485.4L273.1,479.2L276.8,472.8L280.0,473.6L282.3,468.2L281.9,461.7L273.8,442.4L272.6,442.2L269.7,442.2L260.3,430.7L246.6,433.2L238.7,431.0L227.0,422.4L223.3,437.5L226.6,447.0L225.9,459.1L227.3,479.3L193.0,484.7L173.4,488.7L159.4,459.6L160.8,456.1L157.4,447.0L151.3,447.2L149.8,439.4L148.9,438.7L146.8,446.3Z","cx":228.1,"cy":507.5,"students":46790,"academies":1166,"per10k":249.2,"A":[186,72,189,5,140,514],"G":[292,123,274,0,215,93],"P":{"kg":[3168,357],"el":[19889,1422],"mid":[14886,1129],"high":[12015,1031]},"E":{"grad":4631,"adm":4620,"gen":3452,"voc":456,"sp":259,"au":417,"oth":36}},{"name":"영등포구","d":"M280.5,422.3L304.1,438.7L315.9,444.5L365.4,458.2L377.2,460.1L396.3,478.6L403.0,485.1L405.7,494.5L411.0,504.1L392.9,511.2L372.3,516.0L358.5,514.8L360.9,523.2L357.2,524.1L348.1,552.8L344.9,564.7L329.5,568.3L309.5,599.2L303.7,597.5L295.1,588.2L289.0,567.4L288.4,550.0L289.3,538.2L282.0,527.1L258.4,512.9L259.2,498.2L260.6,490.0L263.3,487.0L274.5,480.7L277.8,475.1L281.1,476.0L284.3,468.5L283.8,461.2L275.2,440.7L272.8,440.2L270.9,432.8L280.5,422.3Z","e":"M280.8,424.9L273.1,433.4L274.4,438.5L276.7,439.0L285.8,460.8L286.4,468.9L282.3,478.4L278.7,477.4L276.0,482.2L264.6,488.6L262.5,490.9L261.1,498.5L260.5,511.9L283.4,525.6L291.4,537.6L290.4,550.0L291.0,567.0L296.9,587.1L304.8,595.7L308.6,596.9L328.3,566.5L343.3,563.0L346.1,552.2L355.6,522.4L358.4,521.7L355.8,512.5L372.2,514.0L392.3,509.2L408.1,503.1L403.8,495.2L401.3,486.1L394.9,480.1L376.3,462.0L365.0,460.1L315.2,446.4L303.1,440.4Z","cx":322.0,"cy":492.3,"students":23981,"academies":526,"per10k":219.3,"A":[143,10,62,1,47,238],"G":[165,44,59,0,82,18],"P":{"kg":[2826,320],"el":[12254,1040],"mid":[6253,526],"high":[5474,537]},"E":{"grad":1993,"adm":1985,"gen":1574,"voc":213,"sp":73,"au":118,"oth":7}},{"name":"동작구","d":"M474.9,525.6L475.3,547.6L477.1,552.3L485.6,558.5L480.9,568.3L478.0,621.8L468.0,622.0L454.2,625.3L434.5,603.3L436.7,593.1L433.4,583.3L434.2,576.4L424.6,581.4L418.4,582.9L414.1,579.2L403.9,574.6L392.1,579.6L380.7,579.7L377.0,577.3L370.0,576.8L362.2,572.1L359.8,574.4L354.8,585.7L339.3,587.2L331.1,593.2L315.4,599.2L309.5,599.2L329.5,568.3L344.9,564.7L348.1,552.8L357.2,524.1L360.9,523.2L358.5,514.8L372.3,516.0L392.9,511.2L411.0,504.1L417.5,510.9L426.0,517.0L441.5,523.8L474.9,525.6Z","e":"M473.0,527.5L441.1,525.8L425.1,518.7L416.2,512.4L410.5,506.5L393.5,513.1L372.5,518.0L361.2,517.0L363.3,524.6L358.8,525.8L350.0,553.4L346.5,566.4L330.7,570.0L313.2,597.2L315.0,597.2L330.1,591.4L338.6,585.3L353.5,583.8L358.1,573.2L361.9,569.6L370.7,574.8L377.7,575.3L381.3,577.7L391.7,577.7L404.0,572.4L415.2,577.5L419.0,580.7L423.9,579.5L436.4,573.0L436.6,573.2L435.4,583.1L438.7,593.0L436.7,602.7L454.9,623.1L467.8,620.0L476.1,619.8L478.9,567.8L483.1,559.1L475.5,553.5L473.3,548.0Z","cx":404.9,"cy":542.0,"students":24125,"academies":518,"per10k":214.7,"A":[108,26,73,3,55,244],"G":[153,49,99,0,97,20],"P":{"kg":[2015,220],"el":[12271,1004],"mid":[6766,613],"high":[5088,498]},"E":{"grad":2198,"adm":2195,"gen":1741,"voc":245,"sp":99,"au":104,"oth":6}},{"name":"송파구","d":"M661.7,490.4L674.4,494.1L684.6,494.5L699.0,492.2L716.1,485.8L730.1,483.5L738.7,466.2L753.4,440.5L772.6,447.4L782.7,453.9L776.7,476.2L773.9,482.3L825.7,511.1L828.7,512.4L828.7,516.2L824.2,519.6L821.2,525.0L818.8,535.1L821.3,543.7L830.1,549.0L835.4,549.6L840.6,546.2L844.4,549.9L859.2,553.9L864.8,557.8L861.6,567.1L862.0,573.5L858.2,584.0L855.0,588.5L844.2,592.0L839.0,612.0L839.0,617.0L832.7,621.9L823.2,622.2L816.7,630.6L806.4,626.4L798.8,625.3L799.4,635.2L808.9,641.8L803.1,645.6L794.6,645.6L786.9,641.1L787.0,648.0L780.7,652.9L780.8,647.4L777.0,638.9L757.9,606.1L759.2,603.1L752.3,589.6L745.0,581.8L737.6,576.0L725.8,569.8L686.3,556.7L677.7,554.6L667.8,544.8L662.1,504.2L660.7,501.7L661.7,490.4Z","e":"M663.5,493.0L662.8,501.2L664.1,503.6L669.7,543.8L678.7,552.8L686.9,554.8L726.6,567.9L738.6,574.3L746.4,580.3L753.9,588.5L761.4,603.1L760.2,606.0L778.7,637.9L782.8,647.0L782.7,648.7L785.0,647.0L784.9,637.7L784.9,637.7L795.1,643.6L802.5,643.6L805.3,641.8L797.4,636.3L796.7,622.9L806.9,624.5L816.0,628.2L822.2,620.3L832.0,619.9L837.0,616.0L837.0,611.8L842.6,590.4L853.7,586.8L856.4,583.1L859.9,573.2L859.6,566.8L862.4,558.6L858.3,555.8L843.4,551.7L840.3,548.8L835.8,551.7L829.4,550.9L819.6,545.0L816.7,535.2L819.4,524.3L822.7,518.2L826.7,515.2L826.7,513.7L824.8,512.9L771.3,483.1L774.8,475.5L780.4,454.8L771.7,449.2L754.3,442.9L740.4,467.1L731.5,485.3L716.6,487.7L699.5,494.1L684.7,496.5L674.1,496.1Z","cx":762.8,"cy":533.4,"students":58518,"academies":1154,"per10k":197.2,"A":[320,65,187,5,194,484],"G":[306,104,150,0,133,40],"P":{"kg":[4929,525],"el":[27814,2138],"mid":[16520,1335],"high":[14184,1299]},"E":{"grad":5148,"adm":5132,"gen":3843,"voc":351,"sp":296,"au":599,"oth":43}},{"name":"관악구","d":"M478.0,621.8L480.1,632.4L484.4,640.6L489.4,645.7L492.2,652.0L490.7,665.9L493.2,672.1L480.5,675.9L476.5,686.0L466.6,692.9L461.7,700.7L455.4,700.8L441.1,706.1L440.4,715.4L438.3,718.4L430.3,719.2L428.3,722.5L416.9,722.5L399.9,727.9L393.6,727.9L387.4,732.2L384.9,728.3L385.3,720.4L379.1,712.5L369.3,705.8L369.2,699.2L364.4,693.6L352.4,682.1L350.8,675.9L338.7,673.1L334.1,673.2L333.4,662.9L330.2,656.2L332.1,652.7L327.6,649.2L320.3,632.7L325.6,630.0L328.3,620.9L323.0,617.6L323.5,610.2L304.0,614.6L301.4,611.8L309.5,599.2L315.4,599.2L331.1,593.2L339.3,587.2L354.8,585.7L359.8,574.4L362.2,572.1L370.0,576.8L377.0,577.3L380.7,579.7L392.1,579.6L403.9,574.6L414.1,579.2L418.4,582.9L424.6,581.4L434.2,576.4L433.4,583.3L436.7,593.1L434.5,603.3L454.2,625.3L468.0,622.0L478.0,621.8Z","e":"M476.4,623.8L468.3,624.0L453.5,627.5L432.4,603.9L434.6,593.2L431.4,583.5L431.8,579.9L425.3,583.3L417.9,585.1L413.1,580.9L403.9,576.8L392.5,581.6L380.1,581.7L376.3,579.2L369.4,578.8L362.5,574.6L361.5,575.6L356.2,587.6L340.0,589.1L332.0,595.0L315.8,601.2L310.6,601.2L303.9,611.6L304.7,612.4L325.7,607.6L325.0,616.6L330.7,620.1L327.3,631.4L322.9,633.7L329.2,647.9L334.7,652.1L332.5,656.3L335.3,662.4L336.0,671.2L338.9,671.1L352.4,674.2L354.2,681.1L365.9,692.2L371.2,698.4L371.3,704.7L380.5,711.1L387.3,719.8L386.9,727.7L388.0,729.4L392.9,725.9L399.6,725.9L416.6,720.5L427.2,720.5L429.1,717.3L437.2,716.5L438.5,714.7L439.2,704.7L455.0,698.9L460.6,698.7L465.1,691.5L474.8,684.7L479.1,674.3L490.5,670.8L488.7,666.2L490.2,652.3L487.7,646.9L482.8,641.8L478.2,633.0Z","cx":405.3,"cy":655.5,"students":24107,"academies":460,"per10k":190.8,"A":[127,15,46,1,37,227],"G":[131,27,58,0,54,13],"P":{"kg":[1698,217],"el":[10078,892],"mid":[5994,584],"high":[8035,853]},"E":{"grad":1964,"adm":1963,"gen":1483,"voc":375,"sp":71,"au":30,"oth":4}},{"name":"서대문구","d":"M410.9,265.7L415.9,269.2L417.7,274.6L416.0,286.0L418.9,291.0L425.5,291.9L423.7,300.3L428.0,310.2L428.2,314.2L424.5,328.6L430.9,334.6L422.6,339.4L417.8,344.4L445.9,379.5L452.3,390.2L446.5,392.1L439.4,397.5L434.8,398.8L428.8,404.7L425.3,402.5L390.9,405.3L381.9,408.9L359.8,398.8L360.0,392.9L363.3,386.6L357.8,381.3L345.1,377.4L312.8,359.3L306.0,353.7L309.3,349.8L329.6,325.0L337.4,326.3L336.6,332.8L350.6,330.4L353.9,321.8L358.7,321.9L363.1,318.6L362.5,313.0L364.8,306.7L375.0,296.9L390.1,290.7L391.8,278.6L393.8,274.0L399.2,274.0L403.9,265.8L410.9,265.7Z","e":"M410.3,267.7L405.0,267.8L400.3,276.0L395.1,276.0L393.8,279.1L391.9,292.1L376.1,298.6L366.6,307.9L364.5,313.2L365.2,319.5L359.3,323.9L355.3,323.8L352.1,332.2L334.3,335.3L335.2,327.9L330.4,327.2L310.8,351.1L308.9,353.4L314.0,357.6L345.9,375.6L358.9,379.5L365.8,386.2L362.0,393.4L361.9,397.5L382.0,406.7L390.4,403.3L425.8,400.4L428.6,402.2L433.8,397.0L438.5,395.7L445.5,390.3L449.3,389.1L444.3,380.7L415.1,344.3L421.3,337.8L427.6,334.2L422.3,329.3L426.2,314.0L426.0,310.7L421.6,300.5L423.1,293.6L417.7,292.9L414.0,286.4L415.7,274.7L414.3,270.4Z","cx":382.2,"cy":352.2,"students":21912,"academies":413,"per10k":188.5,"A":[91,15,58,1,64,163],"G":[143,45,73,0,69,18],"P":{"kg":[1761,184],"el":[11617,899],"mid":[5701,520],"high":[4594,435]},"E":{"grad":1847,"adm":1843,"gen":1418,"voc":238,"sp":76,"au":104,"oth":7}},{"name":"강서구","d":"M211.7,355.9L211.0,365.6L213.1,369.5L230.0,379.7L255.0,401.3L280.5,422.3L270.9,432.8L272.8,440.2L270.6,440.2L261.1,428.6L246.7,431.1L239.5,429.1L225.7,419.0L221.2,437.6L224.5,447.3L223.9,459.1L225.1,477.6L192.6,482.8L174.5,486.4L161.6,459.5L162.9,456.1L158.7,444.9L152.9,445.2L151.6,438.3L147.9,435.2L145.1,444.8L135.1,448.1L119.0,448.2L109.8,445.5L107.6,441.4L94.6,442.1L87.0,448.7L84.9,455.8L76.3,461.2L74.0,451.4L76.4,446.0L69.8,445.0L69.8,439.5L63.1,437.8L58.9,432.7L44.2,433.0L34.7,425.7L25.4,426.3L17.9,413.8L12.0,407.5L20.0,407.1L21.6,403.4L37.4,390.2L37.6,384.4L32.9,375.7L39.7,376.5L45.4,373.5L50.1,367.8L48.5,363.5L50.6,358.5L65.2,348.1L73.1,348.7L72.7,340.3L74.1,333.2L78.6,332.8L84.9,319.0L89.2,316.9L85.8,311.0L86.2,306.3L82.2,298.6L81.0,291.2L84.0,284.2L87.2,283.5L88.7,276.0L91.4,274.5L99.3,277.1L122.0,302.4L131.4,312.0L145.2,318.7L197.0,353.3L211.7,355.9Z","e":"M209.6,357.5L196.3,355.1L144.2,320.4L130.2,313.6L120.5,303.8L98.2,278.8L91.6,276.6L90.5,277.3L88.9,285.1L85.4,285.9L83.1,291.4L84.2,298.0L88.2,305.9L87.8,310.5L92.0,317.8L86.5,320.5L80.0,334.7L75.8,335.1L74.7,340.4L75.2,350.8L65.7,350.1L52.3,359.8L50.7,363.5L52.4,368.2L46.7,375.1L40.0,378.6L36.5,378.2L39.6,383.9L39.3,391.2L23.2,404.6L21.4,409.1L16.5,409.3L19.6,412.6L26.5,424.2L35.3,423.7L44.9,430.9L59.8,430.7L64.2,436.1L71.8,437.9L71.8,443.2L79.3,444.4L76.1,451.6L77.6,458.0L83.2,454.5L85.2,447.6L93.9,440.1L108.7,439.3L111.1,443.9L119.3,446.2L134.8,446.1L143.5,443.2L146.8,431.7L153.4,437.3L154.6,443.1L160.1,442.9L165.0,456.1L163.8,459.4L175.7,484.2L192.3,480.8L223.0,475.9L221.9,459.1L222.5,447.6L219.1,437.7L224.5,415.6L240.4,427.3L246.8,429.1L261.9,426.4L269.6,435.8L268.7,432.3L277.6,422.5L253.7,402.9L228.9,381.3L211.6,371.0L208.9,366.0Z","cx":123.9,"cy":380.5,"students":43592,"academies":813,"per10k":186.5,"A":[198,26,116,4,104,334],"G":[230,66,135,0,137,31],"P":{"kg":[3753,389],"el":[20082,1606],"mid":[10630,894],"high":[12880,1289]},"E":{"grad":3238,"adm":3235,"gen":2526,"voc":504,"sp":142,"au":54,"oth":9}},{"name":"성동구","d":"M567.9,363.8L581.6,368.7L588.1,367.6L599.3,360.6L608.4,360.3L620.8,367.5L642.9,388.3L645.5,389.6L669.9,394.1L672.8,395.5L676.2,397.2L661.5,430.5L639.4,479.5L623.2,470.1L618.6,465.6L616.5,470.3L581.9,453.0L571.1,456.3L562.7,463.2L549.5,452.9L538.0,451.1L535.6,444.9L536.2,439.1L538.4,428.1L542.7,426.8L553.8,413.6L555.1,406.5L559.9,402.3L566.8,401.4L568.6,392.5L574.2,387.5L575.1,382.1L568.5,381.6L567.9,363.8Z","e":"M570.0,366.7L570.4,379.8L577.5,380.3L576.0,388.5L570.5,393.6L568.5,403.2L560.8,404.2L557.0,407.6L555.7,414.5L543.9,428.6L540.1,429.7L538.2,439.4L537.6,444.6L539.5,449.3L550.3,451.0L562.7,460.6L570.2,454.5L582.1,450.9L615.6,467.5L618.0,462.2L624.4,468.5L638.4,476.7L659.7,429.7L673.6,398.1L671.9,397.3L669.3,396.0L644.8,391.5L641.7,389.9L619.6,369.1L607.9,362.3L599.9,362.6L588.8,369.5L581.4,370.8Z","cx":608.8,"cy":417.4,"students":16452,"academies":304,"per10k":184.8,"A":[103,15,34,0,41,134],"G":[120,21,53,0,49,14],"P":{"kg":[1554,185],"el":[8865,808],"mid":[4125,402],"high":[3462,388]},"E":{"grad":1360,"adm":1356,"gen":869,"voc":188,"sp":56,"au":234,"oth":9}},{"name":"동대문구","d":"M567.5,346.7L580.3,334.9L595.9,314.4L601.7,310.8L605.0,300.2L612.4,297.1L620.2,297.2L625.8,284.1L629.6,287.2L641.1,282.9L644.9,284.3L651.3,273.2L658.4,272.1L665.5,268.4L665.2,261.8L669.3,261.8L671.9,268.6L674.1,279.5L673.6,284.1L668.4,292.1L667.0,297.4L670.8,317.6L683.3,337.7L685.9,346.8L686.7,363.5L672.8,395.5L669.9,394.1L645.5,389.6L642.9,388.3L620.8,367.5L608.4,360.3L599.3,360.6L588.1,367.6L581.6,368.7L567.9,363.8L567.5,346.7Z","e":"M569.5,347.5L569.9,362.4L581.8,366.6L587.3,365.7L598.7,358.7L608.9,358.3L622.0,365.9L644.0,386.6L646.1,387.7L670.5,392.2L671.8,392.8L684.7,363.1L683.9,347.1L681.5,338.5L668.9,318.4L665.0,297.3L666.5,291.2L671.6,283.4L672.0,279.6L670.0,269.2L667.9,263.8L667.3,263.8L667.6,269.6L659.0,274.1L652.6,275.0L645.8,286.8L641.1,285.1L629.2,289.5L626.6,287.3L621.5,299.2L612.8,299.1L606.6,301.6L603.4,312.1L597.3,315.9L581.8,336.3Z","cx":634.6,"cy":331.4,"students":24050,"academies":438,"per10k":182.1,"A":[107,23,55,3,59,187],"G":[120,32,73,0,67,11],"P":{"kg":[2365,243],"el":[11838,907],"mid":[6258,528],"high":[5954,579]},"E":{"grad":1951,"adm":1947,"gen":1324,"voc":290,"sp":87,"au":242,"oth":4}},{"name":"금천구","d":"M301.4,611.8L304.0,614.6L323.5,610.2L323.0,617.6L328.3,620.9L325.6,630.0L320.3,632.7L327.6,649.2L332.1,652.7L330.2,656.2L333.4,662.9L334.1,673.2L338.7,673.1L350.8,675.9L352.4,682.1L364.4,693.6L353.1,703.4L347.9,710.1L345.4,717.8L341.2,721.6L333.4,721.2L327.0,727.9L321.3,738.1L308.5,737.3L308.4,732.3L301.2,726.3L299.8,723.2L300.3,712.8L298.7,708.7L293.1,705.8L294.0,698.7L289.8,687.0L286.7,688.9L279.9,686.7L279.0,680.1L272.9,676.8L272.8,668.5L278.1,660.3L259.3,632.3L252.3,619.4L245.4,600.1L248.2,598.1L256.7,594.9L261.0,596.5L272.3,605.8L279.1,613.8L291.4,616.8L300.3,615.6L301.4,611.8Z","e":"M302.4,615.7L301.9,617.4L291.3,618.8L278.0,615.5L270.9,607.2L259.9,598.3L256.7,597.0L249.2,599.9L247.8,600.8L254.2,618.5L261.0,631.3L280.5,660.3L274.8,669.1L274.9,675.6L280.8,678.8L281.7,685.2L286.4,686.7L290.9,684.0L296.1,698.5L295.2,704.6L300.3,707.2L302.3,712.5L301.8,722.8L302.9,725.1L310.4,731.4L310.5,735.4L320.2,736.0L325.4,726.7L332.6,719.1L340.5,719.5L343.6,716.7L346.1,709.1L351.6,702.0L361.4,693.5L350.6,683.2L349.2,677.6L338.5,675.1L332.3,675.3L331.4,663.4L328.0,656.2L329.6,653.2L326.0,650.5L317.7,631.8L323.9,628.6L326.0,621.8L320.9,618.7L321.3,612.7L303.3,616.8Z","cx":304.9,"cy":663.5,"students":13695,"academies":237,"per10k":173.1,"A":[55,3,17,1,22,114],"G":[73,11,33,0,27,7],"P":{"kg":[1296,139],"el":[6532,589],"mid":[3714,333],"high":[3449,361]},"E":{"grad":1128,"adm":1126,"gen":816,"voc":263,"sp":36,"au":10,"oth":1}},{"name":"광진구","d":"M686.7,363.5L697.1,364.8L713.8,369.7L731.7,361.6L734.8,358.8L741.7,366.0L740.0,369.5L737.0,389.2L735.2,395.6L755.6,396.1L760.9,394.7L762.7,399.4L762.7,413.7L758.7,429.4L753.4,440.5L738.7,466.2L730.1,483.5L716.1,485.8L699.0,492.2L684.6,494.5L674.4,494.1L661.7,490.4L639.4,479.5L661.5,430.5L676.2,397.2L672.8,395.5L686.7,363.5Z","e":"M687.9,365.6L675.4,394.5L678.8,396.2L663.3,431.3L642.0,478.5L662.4,488.5L674.7,492.1L684.4,492.5L698.5,490.3L715.6,483.8L728.8,481.6L736.9,465.2L751.6,439.6L756.9,428.8L760.7,413.5L760.7,399.8L759.7,397.1L755.8,398.1L732.6,397.5L735.0,388.8L738.0,368.8L739.3,366.4L734.7,361.6L732.8,363.3L713.9,371.8L696.7,366.8Z","cx":708.7,"cy":429.5,"students":24938,"academies":428,"per10k":171.6,"A":[121,23,58,0,60,183],"G":[120,36,60,0,47,15],"P":{"kg":[1874,182],"el":[11317,868],"mid":[6599,538],"high":[7022,577]},"E":{"grad":2108,"adm":2102,"gen":1533,"voc":200,"sp":121,"au":233,"oth":15}},{"name":"강동구","d":"M760.9,394.7L768.7,395.6L774.4,388.4L780.6,384.1L805.5,372.7L834.3,363.8L846.8,358.4L872.0,342.7L879.6,343.4L891.9,342.5L898.3,339.4L894.9,348.7L896.4,356.9L900.2,362.8L903.0,370.8L904.0,380.3L909.1,393.1L907.9,415.0L911.6,418.2L910.7,427.9L912.0,435.2L908.2,435.8L902.8,431.9L895.4,435.8L888.3,434.8L875.2,438.4L868.7,436.3L848.0,466.2L847.4,478.9L839.1,488.9L835.4,498.6L831.3,498.8L829.0,505.8L828.7,512.4L825.7,511.1L773.9,482.3L776.7,476.2L782.7,453.9L772.6,447.4L753.4,440.5L758.7,429.4L762.7,413.7L762.7,399.4L760.9,394.7Z","e":"M763.9,397.1L764.7,399.1L764.7,414.0L760.6,430.1L756.1,439.4L773.5,445.6L785.0,453.0L778.6,476.9L776.5,481.4L826.6,509.3L826.9,509.4L827.0,505.4L829.8,496.9L834.0,496.6L837.4,487.9L845.4,478.1L846.0,465.5L867.9,433.9L875.2,436.3L888.2,432.7L895.0,433.7L903.0,429.6L908.7,433.7L909.7,433.5L908.6,428.0L909.5,419.1L905.8,415.9L907.1,393.4L902.0,380.8L901.0,371.2L898.4,363.7L894.5,357.6L892.8,348.6L894.7,343.4L892.4,344.5L879.6,345.4L872.5,344.7L847.7,360.1L835.0,365.7L806.3,374.6L781.6,385.9L775.8,389.9L769.5,397.7Z","cx":819.5,"cy":422.3,"students":45768,"academies":750,"per10k":163.9,"A":[209,40,143,9,124,307],"G":[206,70,143,1,129,34],"P":{"kg":[3962,371],"el":[22499,1596],"mid":[12049,953],"high":[11220,943]},"E":{"grad":3559,"adm":3546,"gen":2622,"voc":369,"sp":174,"au":370,"oth":11}},{"name":"은평구","d":"M457.0,199.5L451.5,205.1L430.6,209.8L424.6,218.3L414.8,219.7L414.1,228.6L411.7,235.8L408.7,239.0L411.0,243.3L412.2,254.4L409.6,263.2L410.9,265.7L403.9,265.8L399.2,274.0L393.8,274.0L391.8,278.6L390.1,290.7L375.0,296.9L364.8,306.7L362.5,313.0L363.1,318.6L358.7,321.9L353.9,321.8L350.6,330.4L336.6,332.8L337.4,326.3L329.6,325.0L309.3,349.8L306.1,352.4L298.6,346.0L292.4,337.4L288.0,335.4L279.8,328.3L264.4,311.7L270.4,303.9L275.2,304.0L271.2,311.3L275.2,318.0L284.1,318.4L288.0,316.5L296.0,318.0L302.2,314.6L300.4,307.0L306.6,300.5L305.0,294.3L305.8,288.8L303.1,278.5L307.0,276.7L306.6,259.9L304.6,252.4L309.9,236.1L313.6,234.9L318.2,227.6L316.4,221.9L321.3,216.1L322.1,210.0L316.6,198.8L325.9,189.7L324.6,182.2L327.8,175.8L329.4,166.9L319.0,161.3L320.5,158.2L332.4,165.8L348.3,163.5L357.2,158.3L364.7,151.5L376.8,149.9L382.2,146.2L389.4,133.4L396.4,129.3L404.3,127.2L405.2,131.3L412.8,138.0L419.5,137.1L424.7,144.2L426.5,153.7L431.9,156.0L436.2,169.0L441.1,170.2L450.6,182.1L450.5,188.0L457.0,199.5Z","e":"M274.8,320.0L281.2,326.8L289.1,333.7L293.8,335.8L300.1,344.6L306.1,349.8L307.9,348.4L328.7,322.9L339.6,324.6L338.9,330.4L349.2,328.7L352.5,319.8L358.0,319.9L361.0,317.7L360.5,312.7L363.1,305.6L373.8,295.2L388.2,289.3L389.9,278.0L392.5,272.0L398.0,272.0L402.7,263.8L407.7,263.7L407.5,263.4L410.2,254.2L409.0,243.9L406.3,238.7L409.9,234.8L412.1,228.2L412.9,218.0L423.5,216.4L429.5,208.0L450.5,203.3L454.5,199.2L448.5,188.5L448.6,182.8L440.0,172.0L434.7,170.7L430.3,157.4L424.8,155.1L422.8,145.0L418.6,139.2L412.2,140.1L403.4,132.4L402.8,129.6L397.2,131.1L390.9,134.9L383.8,147.6L377.5,151.8L365.6,153.4L358.4,160.0L349.0,165.4L332.0,167.9L331.3,167.4L329.7,176.4L326.6,182.5L328.1,190.4L319.0,199.2L324.1,209.6L323.2,216.9L318.6,222.3L320.4,227.9L314.9,236.5L311.5,237.7L306.7,252.5L308.6,259.7L309.1,278.0L305.5,279.6L307.8,288.7L307.0,294.2L308.8,301.0L302.6,307.6L304.5,315.6L296.4,320.1L288.3,318.6L284.5,320.4Z","cx":368.7,"cy":211.6,"students":36723,"academies":590,"per10k":160.7,"A":[119,21,94,1,77,255],"G":[202,44,125,1,113,24],"P":{"kg":[2707,297],"el":[16141,1296],"mid":[9461,811],"high":[11121,1140]},"E":{"grad":3063,"adm":3054,"gen":2233,"voc":617,"sp":97,"au":95,"oth":12}},{"name":"종로구","d":"M457.0,199.5L464.1,201.9L467.5,208.8L473.6,207.8L472.9,220.4L476.5,225.3L480.7,241.8L489.1,247.2L489.6,258.4L487.3,267.7L491.3,283.8L485.2,288.6L478.0,289.4L479.0,298.4L483.0,303.8L488.6,307.4L499.1,310.5L505.6,310.8L508.3,308.2L519.7,307.7L522.9,316.8L530.4,322.6L532.4,327.0L532.8,335.7L536.7,340.1L549.3,335.3L552.9,336.4L557.0,345.3L564.7,344.5L567.5,346.7L567.9,363.8L561.6,363.8L551.6,369.0L521.2,369.6L510.6,372.0L493.8,373.6L469.9,370.5L459.4,370.7L451.1,373.4L445.9,379.5L417.8,344.4L422.6,339.4L430.9,334.6L424.5,328.6L428.2,314.2L428.0,310.2L423.7,300.3L425.5,291.9L418.9,291.0L416.0,286.0L417.7,274.6L415.9,269.2L410.9,265.7L409.6,263.2L412.2,254.4L411.0,243.3L408.7,239.0L411.7,235.8L414.1,228.6L414.8,219.7L424.6,218.3L430.6,209.8L451.5,205.1L457.0,199.5Z","e":"M457.5,201.8L452.6,206.9L431.8,211.6L425.8,220.1L416.7,221.5L416.0,229.0L413.5,236.8L411.2,239.3L412.9,242.7L414.3,254.5L411.8,263.0L412.5,264.3L417.6,267.9L419.8,274.4L418.1,285.6L420.2,289.2L427.9,290.1L425.8,300.0L430.0,309.8L430.2,314.5L426.8,328.0L434.3,335.0L423.8,341.0L420.4,344.5L445.9,376.4L449.9,371.7L459.1,368.7L470.0,368.5L493.8,371.6L510.2,370.0L520.9,367.6L551.1,367.0L561.1,361.8L565.9,361.8L565.5,347.7L564.1,346.5L555.8,347.4L551.5,338.0L549.4,337.4L536.1,342.5L530.9,336.5L530.5,327.4L528.8,323.9L521.2,318.0L518.3,309.8L509.1,310.1L506.4,312.9L498.8,312.5L487.7,309.3L481.6,305.3L477.0,299.1L475.8,287.6L484.4,286.7L489.1,283.0L485.3,267.7L487.6,258.2L487.1,248.4L478.9,243.0L474.7,226.2L470.9,221.0L471.5,210.2L466.4,211.0L462.6,203.5Z","cx":451.9,"cy":263.3,"students":13571,"academies":218,"per10k":160.6,"A":[53,4,12,0,21,119],"G":[41,3,17,0,11,4],"P":{"kg":[877,90],"el":[3986,392],"mid":[2402,267],"high":[7183,808]},"E":{"grad":777,"adm":775,"gen":514,"voc":99,"sp":58,"au":99,"oth":5}},{"name":"구로구","d":"M140.8,536.0L150.1,536.2L156.5,544.4L165.8,551.8L174.8,547.6L173.6,543.4L183.8,543.1L184.7,536.7L192.2,534.5L195.2,531.0L201.3,529.8L207.0,533.4L212.6,531.5L216.7,540.3L221.8,540.3L223.3,544.2L229.1,543.4L235.9,545.3L242.8,543.8L245.5,535.3L256.2,519.7L258.4,512.9L282.0,527.1L289.3,538.2L288.4,550.0L289.0,567.4L295.1,588.2L303.7,597.5L309.5,599.2L301.4,611.8L300.3,615.6L291.4,616.8L279.1,613.8L272.3,605.8L261.0,596.5L256.7,594.9L248.2,598.1L253.5,591.2L250.9,588.2L244.3,590.1L244.3,585.5L233.2,575.3L226.9,582.1L219.2,586.1L211.6,596.7L206.0,598.6L203.0,604.9L199.1,608.3L188.7,607.1L186.3,610.1L185.4,628.3L172.3,624.4L163.7,625.4L155.8,619.3L150.4,622.9L140.2,622.4L135.0,624.3L129.9,618.2L130.4,608.1L129.0,601.4L130.5,597.0L138.0,591.6L136.4,585.7L125.8,581.3L118.5,576.8L114.8,568.9L115.6,563.8L121.1,565.1L127.8,561.9L130.4,554.9L133.9,552.9L136.8,542.6L136.1,537.4L140.8,536.0Z","e":"M141.1,538.0L138.3,538.8L138.9,542.8L135.6,554.2L132.0,556.3L129.4,563.3L121.3,567.2L117.3,566.2L116.9,568.6L120.0,575.4L126.8,579.5L138.0,584.2L140.3,592.4L132.2,598.2L131.1,601.5L132.4,608.0L131.9,617.5L135.6,621.9L139.9,620.3L149.9,620.9L155.9,616.9L164.3,623.4L172.5,622.4L183.5,625.6L184.3,609.4L187.8,605.0L198.4,606.2L201.4,603.7L204.5,597.0L210.3,595.0L217.9,584.5L225.7,580.4L233.1,572.5L246.3,584.6L246.3,587.4L251.6,585.9L256.0,591.1L254.0,593.8L256.8,592.7L262.0,594.8L273.7,604.4L280.2,612.0L291.5,614.7L298.8,613.8L299.6,611.0L306.4,600.4L302.6,599.2L293.3,589.2L287.1,567.7L286.4,549.9L287.3,538.7L280.6,528.6L259.5,516.0L258.0,520.6L247.3,536.2L244.4,545.5L235.8,547.4L229.0,545.4L222.0,546.4L220.4,542.3L215.5,542.3L211.5,534.0L206.8,535.6L200.9,531.9L196.3,532.8L193.4,536.3L186.5,538.2L185.6,545.0L176.2,545.3L177.2,548.7L165.5,554.1L155.1,545.8L149.1,538.1Z","cx":167.5,"cy":582.6,"students":30809,"academies":464,"per10k":150.6,"A":[112,14,53,0,56,202],"G":[155,46,69,0,73,10],"P":{"kg":[2162,241],"el":[14193,1201],"mid":[7849,654],"high":[8767,856]},"E":{"grad":2494,"adm":2490,"gen":2029,"voc":305,"sp":93,"au":55,"oth":8}},{"name":"노원구","d":"M745.1,230.6L736.0,233.4L732.4,238.0L724.5,240.7L709.4,233.3L702.3,232.1L692.2,235.4L671.3,244.7L664.0,244.8L657.8,248.7L651.1,248.1L634.3,232.3L625.2,220.8L620.7,214.1L606.9,202.2L612.2,196.4L614.5,187.0L625.6,165.5L635.8,176.5L637.9,162.3L634.5,148.9L634.0,135.8L628.6,122.7L628.1,114.4L622.7,99.6L623.4,88.7L626.3,77.0L629.4,57.0L626.9,50.9L635.2,44.8L639.9,44.0L650.1,46.2L657.7,43.3L666.9,31.0L674.5,30.8L684.0,25.5L693.6,25.6L699.0,32.0L703.2,42.0L721.9,45.1L724.8,54.4L717.1,65.7L715.2,72.2L719.0,79.2L720.9,87.5L723.2,89.5L724.0,96.5L720.1,107.3L724.9,119.2L723.6,125.6L703.4,136.5L717.4,138.2L720.0,143.8L716.2,151.6L721.5,163.5L728.8,164.6L734.0,163.1L750.1,166.0L758.5,178.0L759.4,191.5L756.4,204.1L744.1,214.1L744.1,218.6L740.3,224.9L745.1,230.6Z","e":"M741.6,229.5L737.9,225.1L742.1,218.1L742.1,213.1L754.6,202.9L757.4,191.3L756.5,178.7L748.9,167.8L734.1,165.1L728.9,166.7L720.1,165.3L714.0,151.6L717.8,143.8L716.1,140.0L699.6,138.0L699.3,136.4L721.9,124.3L722.8,119.4L718.0,107.3L721.9,96.3L721.3,90.5L719.1,88.6L717.1,79.9L713.1,72.4L715.2,64.8L722.6,54.1L720.4,46.9L701.8,43.8L697.3,33.0L692.6,27.5L684.6,27.5L675.1,32.7L668.0,33.0L659.0,44.9L650.3,48.3L639.9,46.1L636.0,46.7L629.3,51.6L631.4,56.7L628.2,77.4L625.4,89.0L624.7,99.3L630.1,113.9L630.6,122.2L636.0,135.4L636.5,148.6L639.9,162.2L637.3,180.2L636.8,180.4L626.1,168.9L616.4,187.8L614.0,197.3L609.8,202.0L622.2,212.7L626.8,219.6L635.8,231.0L651.9,246.2L657.3,246.6L663.4,242.9L670.8,242.7L691.5,233.5L702.2,230.1L710.1,231.4L724.6,238.5L731.2,236.3L734.8,231.6Z","cx":673.6,"cy":95.3,"students":49367,"academies":740,"per10k":149.9,"A":[148,34,143,4,99,318],"G":[231,84,173,2,140,42],"P":{"kg":[4247,431],"el":[19846,1500],"mid":[13042,1064],"high":[16479,1778]},"E":{"grad":4347,"adm":4341,"gen":3346,"voc":481,"sp":241,"au":242,"oth":31}},{"name":"성북구","d":"M464.1,201.9L468.9,196.2L477.9,192.9L484.6,187.9L486.7,190.9L498.9,200.2L503.0,200.2L504.9,205.7L510.3,208.2L517.7,217.1L534.6,222.2L533.8,230.1L536.0,236.8L540.7,242.5L549.4,244.8L559.1,249.8L565.5,256.5L574.5,252.7L582.6,253.6L583.1,262.3L596.9,253.2L603.4,244.7L612.2,236.4L618.3,226.0L625.2,220.8L634.3,232.3L651.1,248.1L657.8,248.7L664.0,244.8L671.3,244.7L671.9,268.6L669.3,261.8L665.2,261.8L665.5,268.4L658.4,272.1L651.3,273.2L644.9,284.3L641.1,282.9L629.6,287.2L625.8,284.1L620.2,297.2L612.4,297.1L605.0,300.2L601.7,310.8L595.9,314.4L580.3,334.9L567.5,346.7L564.7,344.5L557.0,345.3L552.9,336.4L549.3,335.3L536.7,340.1L532.8,335.7L532.4,327.0L530.4,322.6L522.9,316.8L519.7,307.7L508.3,308.2L505.6,310.8L499.1,310.5L488.6,307.4L483.0,303.8L479.0,298.4L478.0,289.4L485.2,288.6L491.3,283.8L487.3,267.7L489.6,258.4L489.1,247.2L480.7,241.8L476.5,225.3L472.9,220.4L473.6,207.8L467.5,208.8L464.1,201.9Z","e":"M466.4,202.2L468.6,206.6L475.8,205.5L475.0,219.8L478.4,224.5L482.4,240.5L491.0,246.1L491.6,258.6L489.4,267.7L493.6,284.6L486.0,290.5L480.2,291.2L480.9,297.6L484.4,302.3L489.4,305.6L499.5,308.6L504.8,308.8L507.4,306.2L521.1,305.7L524.6,315.6L532.0,321.3L534.4,326.5L534.8,334.9L537.3,337.8L549.2,333.2L554.4,334.7L558.2,343.1L565.3,342.4L567.4,344.1L578.8,333.6L594.6,312.9L600.0,309.5L603.4,298.7L612.0,295.1L618.9,295.2L625.0,280.9L630.0,284.9L641.1,280.8L644.0,281.9L650.1,271.3L657.8,270.2L663.5,267.3L663.1,259.8L669.7,259.8L669.3,246.7L664.6,246.8L658.3,250.7L650.2,250.0L632.8,233.7L624.8,223.6L619.8,227.3L613.8,237.7L604.9,246.0L598.3,254.6L581.3,265.9L581.3,265.9L580.7,255.4L574.8,254.8L565.0,258.9L557.9,251.4L548.7,246.7L539.6,244.2L534.2,237.8L531.8,230.3L532.5,223.7L516.5,218.9L509.1,209.8L503.2,207.2L501.6,202.2L498.2,202.2L485.2,192.3L484.1,190.7L478.8,194.7L470.0,197.9Z","cx":559.3,"cy":297.1,"students":32460,"academies":478,"per10k":147.3,"A":[130,16,74,0,67,228],"G":[178,54,122,0,103,23],"P":{"kg":[3580,377],"el":[16306,1300],"mid":[8733,758],"high":[7421,773]},"E":{"grad":2807,"adm":2799,"gen":1955,"voc":357,"sp":139,"au":334,"oth":14}},{"name":"도봉구","d":"M626.9,50.9L629.4,57.0L626.3,77.0L623.4,88.7L622.7,99.6L628.1,114.4L628.6,122.7L634.0,135.8L634.5,148.9L637.9,162.3L635.8,176.5L625.6,165.5L614.5,187.0L612.2,196.4L606.9,202.2L600.4,195.1L597.2,187.4L591.9,184.4L588.0,174.1L576.6,164.8L570.3,158.3L561.2,153.9L551.3,153.8L546.2,150.2L544.7,145.4L547.6,126.9L550.3,120.0L551.4,106.1L557.5,97.2L553.5,89.9L547.5,82.6L543.3,71.9L536.2,70.7L535.5,57.3L536.9,50.5L535.0,45.3L536.8,30.0L543.4,20.5L548.5,20.4L551.9,12.9L559.3,12.0L565.2,16.8L571.2,17.2L578.1,14.2L580.5,18.4L581.6,26.1L584.7,35.0L587.4,38.1L594.8,36.8L607.4,28.3L610.2,32.7L615.8,36.3L623.0,32.1L626.9,50.9Z","e":"M625.0,51.5L621.6,35.3L615.7,38.7L608.7,34.2L606.8,31.2L595.5,38.7L586.6,40.2L583.0,36.0L579.7,26.5L578.6,19.1L577.3,16.8L571.6,19.3L564.4,18.7L558.7,14.1L553.3,14.7L549.8,22.4L544.4,22.5L538.7,30.8L537.1,45.0L539.0,50.3L537.5,57.4L538.1,69.0L544.7,70.1L549.3,81.5L555.1,88.8L559.9,97.4L553.3,106.8L552.3,120.4L549.5,127.5L546.7,145.2L547.9,149.0L551.9,151.8L561.7,151.9L571.4,156.6L578.0,163.3L589.6,172.9L593.5,183.0L598.7,186.0L602.2,194.0L606.9,199.2L610.4,195.4L612.6,186.3L625.1,162.1L634.5,172.1L635.9,162.4L632.5,149.2L632.1,136.3L626.6,123.1L626.1,114.8L620.7,99.9L621.4,88.4L624.3,76.6L627.3,57.2Z","cx":588.6,"cy":123.0,"students":22387,"academies":293,"per10k":130.9,"A":[61,15,54,1,48,118],"G":[110,48,74,0,59,13],"P":{"kg":[1785,197],"el":[11038,861],"mid":[5652,489],"high":[5697,570]},"E":{"grad":1862,"adm":1857,"gen":1284,"voc":326,"sp":110,"au":134,"oth":3}},{"name":"중랑구","d":"M671.3,244.7L692.2,235.4L702.3,232.1L709.4,233.3L724.5,240.7L732.4,238.0L736.0,233.4L745.1,230.6L757.2,231.0L769.5,238.8L768.6,243.2L770.6,255.3L768.6,262.9L772.2,266.4L771.5,274.7L762.5,287.2L763.0,289.8L772.3,300.6L771.1,303.4L761.5,305.2L755.4,316.4L752.8,328.7L735.9,331.0L738.7,336.6L738.5,346.0L735.0,353.0L734.8,358.8L731.7,361.6L713.8,369.7L697.1,364.8L686.7,363.5L685.9,346.8L683.3,337.7L670.8,317.6L667.0,297.4L668.4,292.1L673.6,284.1L674.1,279.5L671.9,268.6L671.3,244.7Z","e":"M673.3,246.0L673.9,268.4L676.1,279.4L675.5,284.8L670.2,292.9L669.0,297.5L672.7,316.9L685.2,336.9L687.8,346.4L688.6,361.7L697.5,362.9L713.6,367.6L730.6,359.9L732.8,357.9L733.1,352.4L736.5,345.5L736.7,337.0L732.8,329.4L751.2,326.9L753.5,315.7L760.2,303.4L769.7,301.6L770.0,301.0L761.1,290.7L760.4,286.7L769.6,274.0L770.1,267.2L766.4,263.6L768.6,255.2L766.6,243.1L767.2,239.8L756.6,233.0L745.3,232.6L737.2,235.1L733.6,239.7L724.4,242.8L708.8,235.2L702.5,234.2L692.9,237.2Z","cx":717.5,"cy":288.5,"students":23657,"academies":308,"per10k":130.2,"A":[70,10,40,2,31,142],"G":[117,28,59,0,58,5],"P":{"kg":[2281,270],"el":[11628,966],"mid":[6271,538],"high":[5758,557]},"E":{"grad":1958,"adm":1957,"gen":1465,"voc":392,"sp":46,"au":46,"oth":8}},{"name":"강북구","d":"M535.5,57.3L536.2,70.7L543.3,71.9L547.5,82.6L553.5,89.9L557.5,97.2L551.4,106.1L550.3,120.0L547.6,126.9L544.7,145.4L546.2,150.2L551.3,153.8L561.2,153.9L570.3,158.3L576.6,164.8L588.0,174.1L591.9,184.4L597.2,187.4L600.4,195.1L606.9,202.2L620.7,214.1L625.2,220.8L618.3,226.0L612.2,236.4L603.4,244.7L596.9,253.2L583.1,262.3L582.6,253.6L574.5,252.7L565.5,256.5L559.1,249.8L549.4,244.8L540.7,242.5L536.0,236.8L533.8,230.1L534.6,222.2L517.7,217.1L510.3,208.2L504.9,205.7L503.0,200.2L498.9,200.2L486.7,190.9L484.6,187.9L487.9,178.0L481.7,168.8L485.3,162.3L482.6,152.0L477.1,145.3L473.9,138.2L474.6,133.5L485.4,126.2L492.3,114.0L502.3,110.6L504.1,102.8L505.0,91.1L502.5,76.5L499.9,71.5L504.5,69.1L513.2,59.7L525.3,56.2L535.5,57.3Z","e":"M533.6,59.1L525.5,58.3L514.2,61.5L505.8,70.7L502.6,72.4L504.4,75.8L507.1,91.0L506.1,103.1L504.0,112.2L493.7,115.6L486.9,127.6L476.4,134.7L475.9,137.9L478.9,144.2L484.4,151.1L487.5,162.6L484.0,168.7L490.1,177.7L486.8,187.5L488.2,189.5L499.6,198.2L504.5,198.2L506.5,204.3L511.5,206.5L518.8,215.4L536.8,220.8L535.9,229.8L537.7,235.8L541.8,240.7L550.1,242.9L560.3,248.1L566.0,254.1L574.2,250.7L584.5,251.8L584.9,258.7L595.5,251.7L601.9,243.3L610.7,235.2L616.8,224.6L622.5,220.3L619.2,215.4L605.5,203.6L598.7,196.2L595.6,188.8L590.3,185.8L586.3,175.3L575.2,166.3L569.1,159.9L560.7,155.9L550.6,155.8L544.5,151.4L542.6,145.5L545.6,126.4L548.3,119.5L549.4,105.4L555.2,97.1L551.8,91.0L545.8,83.6L541.9,73.7L534.3,72.5Z","cx":549.5,"cy":189.3,"students":17666,"academies":209,"per10k":118.3,"A":[59,5,27,1,20,99],"G":[70,17,42,0,35,6],"P":{"kg":[1201,132],"el":[7185,606],"mid":[5493,458],"high":[4988,444]},"E":{"grad":1870,"adm":1867,"gen":1148,"voc":334,"sp":131,"au":247,"oth":7}},{"name":"용산구","d":"M536.2,439.1L535.6,444.9L538.0,451.1L549.5,452.9L562.7,463.2L543.2,482.9L535.1,491.1L530.7,499.9L525.7,505.0L513.4,513.1L494.8,524.0L490.5,521.3L480.0,521.8L474.9,525.6L441.5,523.8L426.0,517.0L417.5,510.9L411.0,504.1L405.7,494.5L403.0,485.1L396.3,478.6L399.5,463.7L412.9,460.0L425.5,445.1L428.4,435.1L432.1,432.8L435.8,426.5L440.1,423.6L436.8,418.7L444.0,411.6L457.8,412.2L467.1,414.3L468.5,409.3L475.8,413.5L482.7,414.5L486.3,412.6L491.5,418.7L496.8,418.9L507.6,430.3L514.5,423.0L523.4,423.9L526.8,421.8L528.1,433.1L533.3,439.6L536.2,439.1Z","e":"M533.9,441.5L532.5,441.7L526.2,433.9L525.1,425.2L523.9,425.9L515.3,425.1L507.6,433.2L495.9,420.9L490.5,420.7L485.8,415.1L483.1,416.6L475.1,415.5L469.7,412.3L468.5,416.6L457.5,414.2L444.7,413.6L439.4,418.9L442.9,424.2L437.2,427.9L433.6,434.2L430.1,436.4L427.3,446.1L414.1,461.7L401.2,465.3L398.5,478.0L404.8,484.0L407.6,493.7L412.6,502.9L418.8,509.3L427.0,515.2L442.0,521.8L474.3,523.5L479.3,519.8L491.1,519.3L494.9,521.6L512.3,511.4L524.4,503.4L529.1,498.7L533.5,489.9L541.8,481.5L559.7,463.4L548.7,454.8L536.6,452.9L533.6,445.2Z","cx":472.6,"cy":469.8,"students":12240,"academies":143,"per10k":116.8,"A":[40,1,9,0,21,60],"G":[52,16,18,0,18,6],"P":{"kg":[1198,130],"el":[5205,510],"mid":[2938,304],"high":[4097,532]},"E":{"grad":981,"adm":978,"gen":741,"voc":118,"sp":39,"au":70,"oth":10}},{"name":"중구","d":"M567.9,363.8L568.5,381.6L575.1,382.1L574.2,387.5L568.6,392.5L566.8,401.4L559.9,402.3L555.1,406.5L553.8,413.6L542.7,426.8L538.4,428.1L536.2,439.1L533.3,439.6L528.1,433.1L526.8,421.8L523.4,423.9L514.5,423.0L507.6,430.3L496.8,418.9L491.5,418.7L486.3,412.6L482.7,414.5L475.8,413.5L468.5,409.3L467.1,414.3L457.8,412.2L444.0,411.6L436.8,418.7L435.3,408.3L438.3,405.3L434.8,398.8L439.4,397.5L446.5,392.1L452.3,390.2L445.9,379.5L451.1,373.4L459.4,370.7L469.9,370.5L493.8,373.6L510.6,372.0L521.2,369.6L551.6,369.0L561.6,363.8L567.9,363.8Z","e":"M566.0,365.8L562.1,365.8L552.1,371.0L521.4,371.6L510.9,374.0L493.8,375.6L469.8,372.5L459.7,372.7L452.3,375.1L448.4,379.7L455.3,391.3L447.4,393.9L440.3,399.3L437.8,400.0L440.8,405.7L437.4,409.0L438.2,414.5L443.2,409.6L458.1,410.2L465.7,411.9L467.3,406.2L476.5,411.6L482.3,412.5L486.8,410.1L492.4,416.8L497.7,416.9L507.6,427.4L513.7,420.9L523.0,421.8L528.4,418.4L530.0,432.3L534.1,437.4L534.5,437.4L536.6,426.5L541.6,425.1L551.9,412.7L553.3,405.5L559.1,400.4L565.2,399.6L566.8,391.5L572.3,386.5L572.8,383.9L566.5,383.5Z","cx":531.3,"cy":395.4,"students":10955,"academies":110,"per10k":100.4,"A":[27,1,8,0,19,57],"G":[29,3,8,0,5,2],"P":{"kg":[810,92],"el":[4280,382],"mid":[1482,176],"high":[5193,605]},"E":{"grad":466,"adm":464,"gen":334,"voc":86,"sp":10,"au":32,"oth":2}}];
+const SEOUL = {"students": 743216, "academies": 15886, "per10k": 213.7};
+const VBW = 924;
+const VBH = 764;
+const STATIC_INSIGHT = "서울 평균 213.7곳을 넘는 구는 25곳 중 6곳뿐입니다. 강남구(479.3), 서초구(344.2), 마포구(337.8)가 특히 높고, 중구(100.4)가 가장 낮습니다.";
+const IDX = {art:0, kor:1, math:2, both:3, eng:4, etc:5};
+const FIXED = {per10k:[130,160,190,250], academies:[250,450,600,1000], students:[15000,23000,30000,45000]};
+const PCATN = {art:'예체능', kor:'국어', math:'수학', both:'국어·수학 함께', eng:'영어', etc:'그 외'};
+const LVN = {tot:'초·중·고', kg:'유치원', el:'초등학교', mid:'중학교', high:'고등학교'};
+const PATHN = {gen:'일반고', voc:'특성화고', sp:'특목고', au:'자율고', spau:'특목·자율고(합산)', oth:'기타'};
+const NAV_SHOW=['ov','combo','private','public','path','rel'];
+const DOMS = [{k:'ov',t:'한눈에 보기'},{k:'combo',t:'종합(3D)'},{k:'private',t:'사설교육'},{k:'public',t:'공교육'},{k:'path',t:'진학'},{k:'rel',t:'관계 보기'}];
+const STATS = {"all|A|gen":[0.0683,0.7455,0.2262,0.277,-0.1935,0.5863,0.2443,0.2499],"all|A|voc":[-0.6449,0.0005,-0.5,0.0109,-0.7712,-0.1154,-0.4348,0.0337],"all|A|sp":[0.1349,0.5204,0.0923,0.6608,-0.354,0.5198,0.0591,0.7837],"all|A|au":[0.437,0.0289,0.1077,0.6084,-0.2782,0.4793,0.0009,0.9968],"all|A|spau":[0.4132,0.0401,0.1904,0.3619,-0.2212,0.5609,0.0857,0.6906],"art|A|gen":[0.0371,0.8602,0.0638,0.7617,-0.3413,0.4416,0.0652,0.7621],"art|A|voc":[-0.4787,0.0155,-0.5085,0.0095,-0.7738,-0.1221,-0.4539,0.0259],"art|A|sp":[0.0548,0.7947,0.1085,0.6058,-0.3623,0.5634,0.0896,0.6773],"art|A|au":[0.3432,0.093,0.2938,0.154,-0.1094,0.6313,0.2165,0.3095],"art|A|spau":[0.3144,0.1259,0.3524,0.0841,-0.0511,0.6841,0.2809,0.1836],"art|AG|gen":[0.1224,0.5599,0.2077,0.3191,-0.2768,0.6261,0.227,0.2862],"art|AG|voc":[-0.4124,0.0405,-0.4169,0.0381,-0.6867,-0.0676,-0.3696,0.0755],"art|AG|sp":[-0.0458,0.828,-0.0477,0.8209,-0.5235,0.4336,-0.0626,0.7713],"art|AG|au":[0.2421,0.2436,0.1162,0.5803,-0.3124,0.517,0.0243,0.9101],"art|AG|spau":[0.2049,0.3257,0.1708,0.4143,-0.2617,0.5544,0.0896,0.6772],"kor|A|gen":[0.001,0.9963,0.0292,0.8897,-0.3845,0.4194,0.0313,0.8845],"kor|A|voc":[-0.7068,0.0001,-0.6246,0.0008,-0.8443,-0.2664,-0.5757,0.0032],"kor|A|sp":[0.3009,0.1438,0.4154,0.0389,-0.0309,0.7641,0.4035,0.0506],"kor|A|au":[0.5192,0.0078,0.3646,0.0731,-0.0513,0.6879,0.2904,0.1686],"kor|A|spau":[0.5189,0.0079,0.4593,0.0209,0.0496,0.77,0.3905,0.0592],"kor|AG|gen":[0.2168,0.2979,0.1762,0.3996,-0.2335,0.5373,0.187,0.3817],"kor|AG|voc":[-0.6574,0.0004,-0.7054,0.0001,-0.8622,-0.4098,-0.6704,0.0003],"kor|AG|sp":[0.2543,0.22,0.4369,0.029,-0.045,0.8307,0.4252,0.0383],"kor|AG|au":[0.3087,0.1333,0.2985,0.1473,-0.1393,0.6465,0.227,0.2862],"kor|AG|spau":[0.3234,0.1148,0.3989,0.0482,-0.0528,0.7418,0.3301,0.1152],"math|A|gen":[0.1783,0.3937,0.2654,0.1998,-0.1458,0.6146,0.2826,0.1809],"math|A|voc":[-0.6786,0.0002,-0.6577,0.0004,-0.8576,-0.3297,-0.613,0.0014],"math|A|sp":[0.2462,0.2354,0.3446,0.0916,-0.1141,0.7377,0.3278,0.1179],"math|A|au":[0.3572,0.0796,0.1785,0.3934,-0.267,0.5528,0.087,0.6862],"math|A|spau":[0.3647,0.073,0.2985,0.1472,-0.1602,0.6633,0.2087,0.3276],"math|AG|gen":[0.1594,0.4467,0.2008,0.3359,-0.2236,0.5555,0.2148,0.3135],"math|AG|voc":[-0.5238,0.0072,-0.5492,0.0045,-0.7841,-0.2039,-0.4939,0.0142],"math|AG|sp":[0.2321,0.2643,0.31,0.1315,-0.1587,0.7288,0.2939,0.1633],"math|AG|au":[0.2516,0.2251,0.1785,0.3934,-0.2445,0.5482,0.093,0.6654],"math|AG|spau":[0.2685,0.1943,0.2874,0.1637,-0.1472,0.6483,0.2048,0.337],"eng|A|gen":[0.0712,0.7351,0.0115,0.9563,-0.3994,0.4073,0.0157,0.9421],"eng|A|voc":[-0.7455,0.0,-0.6346,0.0007,-0.8469,-0.2942,-0.587,0.0026],"eng|A|sp":[0.1795,0.3906,0.2954,0.1517,-0.1678,0.7198,0.28,0.1851],"eng|A|au":[0.5087,0.0094,0.4146,0.0393,-0.03,0.7473,0.3452,0.0985],"eng|A|spau":[0.4854,0.0139,0.4778,0.0157,0.027,0.8218,0.4105,0.0463],"eng|AG|gen":[0.2247,0.2802,0.2585,0.2122,-0.1668,0.5949,0.2687,0.2042],"eng|AG|voc":[-0.5802,0.0024,-0.5708,0.0029,-0.786,-0.2509,-0.5278,0.008],"eng|AG|sp":[0.0983,0.6403,0.1954,0.3493,-0.2928,0.6431,0.18,0.4],"eng|AG|au":[0.2678,0.1956,0.1931,0.3551,-0.2215,0.5726,0.1157,0.5905],"eng|AG|spau":[0.2563,0.2162,0.2789,0.177,-0.1622,0.6552,0.2066,0.3328],"subj|A|gen":[0.1131,0.5903,0.1415,0.4998,-0.2692,0.5092,0.1504,0.4829],"subj|A|voc":[-0.7343,0.0,-0.63,0.0007,-0.8429,-0.2909,-0.5817,0.0029],"subj|A|sp":[0.2415,0.2448,0.3438,0.0924,-0.1242,0.7369,0.3304,0.1148],"subj|A|au":[0.4565,0.0218,0.2769,0.1802,-0.1423,0.6367,0.1939,0.3639],"subj|A|spau":[0.4516,0.0235,0.3801,0.0609,-0.0417,0.7324,0.3001,0.1543],"subj|AG|gen":[0.1999,0.3381,0.2246,0.2804,-0.1846,0.5786,0.2383,0.2622],"subj|AG|voc":[-0.585,0.0021,-0.5915,0.0018,-0.8053,-0.2642,-0.5417,0.0063],"subj|AG|sp":[0.1944,0.3518,0.3246,0.1134,-0.1549,0.7471,0.3104,0.1398],"subj|AG|au":[0.2748,0.1837,0.1923,0.3571,-0.2298,0.5657,0.1078,0.616],"subj|AG|spau":[0.2816,0.1727,0.3024,0.1418,-0.1384,0.6641,0.2209,0.2996]};
+const RELX = [{k:'all',t:'전체 학원'},{k:'art',t:'예체능'},{k:'kor',t:'국어'},{k:'math',t:'수학'},{k:'eng',t:'영어'},{k:'subj',t:'교과(국·수·영)'}];
+const RELY = ['gen','voc','sp','au','spau'];
+const XN = {all:'사설학원', art:'예체능 학원', kor:'국어 학원', math:'수학 학원', eng:'영어 학원', subj:'교과(국·수·영) 학원'};
+const CATS = {
+  private:[{k:'all',t:'전체'},{k:'art',t:'예체능'},{k:'kor',t:'국어'},{k:'math',t:'수학'},{k:'both',t:'국어·수학 함께'},{k:'eng',t:'영어'},{k:'etc',t:'그 외'}],
+  public:[{k:'tot',t:'초·중·고'},{k:'kg',t:'유치원'},{k:'el',t:'초등'},{k:'mid',t:'중학'},{k:'high',t:'고등'}],
+  path:[{k:'gen',t:'일반고'},{k:'voc',t:'특성화고'},{k:'sp',t:'특목고'},{k:'au',t:'자율고'},{k:'spau',t:'특목·자율 합산'},{k:'oth',t:'기타'}]
+};
+const CAPT = {private:'학원 분류', public:'학교급', path:'진학 유형'};
+const ST = {domain:'ov', private:{metric:'per10k',cat:'all'}, public:{metric:'ratio',cat:'tot'}, path:{metric:'rate',cat:'gen'}, rel:{x:'all',y:'spau'}, combo:{h:'per10k',c:'spau',s:'subj10k'}, ov:{L:'a',a:'per10k',b:'rTot',c:'spau'}};
+let scope='A', pinned=null, hover=null, filt=null;
+
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const cur=()=>ST[ST.domain], dom=()=>ST.domain, met=()=>cur().metric, cat=()=>cur().cat;
+const nf=v=>Math.round(v).toLocaleString('ko-KR');
+const scNoun=()=>scope==='A'?'학원':'학원·교습소';
+const sumArr=(list,f)=>list.reduce((s,o)=>s+f(o),0);
+
+// Seoul as a pseudo-district so every calculation works for it too
+const SEO={name:'서울 전체', students:SEOUL.students, academies:SEOUL.academies, per10k:SEOUL.per10k, P:{}, E:{}};
+SEO.A=D[0].A.map((_,i)=>sumArr(D,o=>o.A[i])); SEO.G=D[0].G.map((_,i)=>sumArr(D,o=>o.G[i]));
+['kg','el','mid','high'].forEach(k=>SEO.P[k]=[0,1].map(i=>sumArr(D,o=>o.P[k][i])));
+Object.keys(D[0].E).forEach(k=>SEO.E[k]=sumArr(D,o=>o.E[k]));
+
+const arr=d=>scope==='A'?d.A:d.A.map((v,i)=>v+d.G[i]);
+const lv=(d,k)=>k==='tot'?[0,1].map(i=>d.P.el[i]+d.P.mid[i]+d.P.high[i]):d.P[k];
+const pc=(d,k)=>k==='spau'?d.E.sp+d.E.au:d.E[k];
+
+function metricsFor(dm,ct){
+  if(dm==='private') return ct==='all'?['per10k','academies','students']:['per10k','academies','share','students'];
+  if(dm==='public') return ['ratio','teachers','pstudents'];
+  return ['rate','pcount'];
+}
+const metrics=()=>(dom()==='rel'||dom()==='combo')?[]:metricsFor(dom(),cat());
+
+function val(d,m){
+  const c=cat();
+  switch(m){
+    case 'students': return d.students;
+    case 'per10k': return c==='all'?d.per10k:arr(d)[IDX[c]]/d.students*1e4;
+    case 'academies': return c==='all'?d.academies:arr(d)[IDX[c]];
+    case 'share': {const a=arr(d); return a[IDX[c]]/a.reduce((x,y)=>x+y,0)*100}
+    case 'ratio': {const [S,T]=lv(d,c); return S/T}
+    case 'teachers': return lv(d,c)[1];
+    case 'pstudents': return lv(d,c)[0];
+    case 'rate': return pc(d,c)/d.E.grad*100;
+    case 'pcount': return pc(d,c);
+  }
+}
+const rankOf=(d,m)=>1+D.filter(o=>val(o,m)>val(d,m)).length;
+
+function title(m){
+  if(dom()==='rel') return `학원 밀도와 ${PATHN[ST.rel.y]} 진학률의 관계`;
+  if(dom()==='combo') return '사설교육·공교육·진학을 한 화면에서';
+  m=m||met(); const c=cat(), dm=dom();
+  if(m==='students') return '초중고 학생 수';
+  if(dm==='private'){
+    if(c==='all') return m==='per10k'?'학생 1만 명당 사설학원 수':'사설학원 수';
+    if(m==='per10k') return `학생 1만 명당 ${PCATN[c]} ${scNoun()} 수`;
+    if(m==='academies') return `${PCATN[c]} ${scNoun()} 수`;
+    return `${scNoun()} 중 ${PCATN[c]} 비중`;
+  }
+  if(dm==='public'){
+    const n=LVN[c];
+    return m==='ratio'?`${n} 교원 1인당 학생 수`:(m==='teachers'?`${n} 교원 수`:`${n} 재학생 수`);
+  }
+  const n=PATHN[c];
+  return m==='rate'?`중학교 졸업자 중 ${n} 진학률`:`${n} 진학자 수`;
+}
+function tabName(m){
+  const c=cat();
+  switch(m){
+    case 'students': return '초중고 학생 수';
+    case 'per10k': return c==='all'?'학생 1만 명당 학원 수':'1만 명당 수';
+    case 'academies': return c==='all'?'사설학원 수':`${PCATN[c]} ${scNoun()} 수`;
+    case 'share': return '전체 중 비중';
+    case 'ratio': return '교원 1인당 학생 수';
+    case 'teachers': return '교원 수';
+    case 'pstudents': return '재학생 수';
+    case 'rate': return '진학률';
+    case 'pcount': return '진학자 수';
+  }
+}
+const unit=m=>(m==='share'||m==='rate')?'':((m==='per10k'||m==='academies')?'곳':'명');
+const shortCount=v=>v>=10000?(v/10000).toFixed(1)+'만':nf(v);
+function full(m,v){
+  if(m==='per10k'||m==='ratio') return v.toFixed(1);
+  if(m==='share'||m==='rate') return v.toFixed(1)+'%';
+  return nf(v);
+}
+function short(m,v){
+  if(m==='per10k'||m==='ratio') return v.toFixed(1);
+  if(m==='share') return v.toFixed(0)+'%';
+  if(m==='rate') return v.toFixed(1)+'%';
+  if(m==='students'||m==='pstudents') return shortCount(v);
+  return nf(v);
+}
+function edge(m,v){
+  if(m==='students'||m==='pstudents') return shortCount(v);
+  if(m==='share'||m==='rate') return +v.toFixed(1)+'%';
+  if(m==='per10k'||m==='ratio') return String(+v.toFixed(1));
+  return nf(v);
+}
+function breaks(){
+  const m=met();
+  if(dom()==='private'&&(cat()==='all'||m==='students')) return FIXED[m];
+  const s=D.map(d=>val(d,m)).sort((a,b)=>a-b);
+  const inc=r=>r[0]>s[0]&&r.every((x,i)=>i===0||x>r[i-1]);
+  const q=[5,10,15,20].map(i=>s[i]);
+  for(const p of [2,3,4]){
+    const r=q.map(x=>Number(x.toPrecision(p)));
+    if(inc(r)) return r;
+  }
+  const lo=s[0], hi=s[s.length-1];
+  let r=[1,2,3,4].map(i=>lo+(hi-lo)*i/5);
+  if(['academies','teachers','pstudents','pcount'].includes(m)){
+    r=r.map(Math.round);
+    for(let i=1;i<4;i++) if(r[i]<=r[i-1]) r[i]=r[i-1]+1;
+  } else r=r.map(x=>Number(x.toPrecision(2)));
+  return r;
+}
+const cls=(v,b)=>1+b.filter(x=>v>=x).length;
+
+const cellEls={}, lblEls={};
+D.forEach(d=>{
+  const p=document.createElementNS(NS,'path');
+  p.setAttribute('d',d.d); p.setAttribute('class','cell');
+  p.setAttribute('tabindex','0'); p.setAttribute('role','button');
+  p.addEventListener('mouseenter',()=>{hover=d.name;hv()});
+  p.addEventListener('mouseleave',()=>{hover=null;hv()});
+  p.addEventListener('focus',()=>{hover=d.name;hv()});
+  p.addEventListener('blur',()=>{hover=null;hv()});
+  p.addEventListener('click',()=>{if(!suppress) toggle(d.name)});
+  p.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(d.name)}});
+  $('cells').appendChild(p); cellEls[d.name]=p;
+
+  const t=document.createElementNS(NS,'text'); t.setAttribute('class','lbl');
+  const n=document.createElementNS(NS,'tspan'); n.setAttribute('class','n'); n.textContent=(d.name==='중구'?d.name:d.name.replace(/구$/,''));
+  const v=document.createElementNS(NS,'tspan'); v.setAttribute('class','v');
+  const r=document.createElementNS(NS,'tspan'); r.setAttribute('class','r');
+  t.appendChild(n); t.appendChild(v); t.appendChild(r); $('labels').appendChild(t); lblEls[d.name]={t,n,v,r};
+});
+
+function toggle(name){pinned=(pinned===name)?null:name;paint()}
+function setDomain(k){ST.domain=k;filt=null;paint()}
+
+function doms(){
+  ['doms'].forEach(id=>{
+    const el=$(id); el.innerHTML='';
+    DOMS.filter(x=>NAV_SHOW.includes(x.k)).forEach(x=>{
+      const b=document.createElement('button'); b.className='dom'; b.textContent=x.t;
+      b.setAttribute('aria-pressed',x.k===dom()); b.onclick=()=>setDomain(x.k);
+      el.appendChild(b);
+    });
+  });
+}
+function tabs(){
+  $('tabs').innerHTML='';
+  metrics().forEach(k=>{
+    const b=document.createElement('button'); b.className='tab'; b.textContent=tabName(k);
+    b.setAttribute('aria-pressed',k===met()); b.onclick=()=>{cur().metric=k;filt=null;paint()};
+    $('tabs').appendChild(b);
+  });
+}
+function chips(){
+  const el=$('chips'); el.innerHTML=`<span class="cap">${CAPT[dom()]}</span>`;
+  CATS[dom()].forEach(c=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=c.t;
+    b.setAttribute('aria-pressed',c.k===cat());
+    b.onclick=()=>{cur().cat=c.k; if(!metrics().includes(cur().metric)) cur().metric=metrics()[0]; filt=null; paint()};
+    el.appendChild(b);
+  });
+  if(dom()==='private'&&cat()!=='all'){
+    const s=document.createElement('span'); s.className='sep'; el.appendChild(s);
+    [['A','학원만'],['AG','교습소 포함']].forEach(([k,t])=>{
+      const b=document.createElement('button'); b.className='chip'; b.textContent=t;
+      b.setAttribute('aria-pressed',(k==='A')===(scope==='A'));
+      b.onclick=()=>{scope=(k==='A')?'A':'AG'; filt=null; paint()};
+      el.appendChild(b);
+    });
+  }
+}
+function legend(){
+  const m=met(), b=breaks(), el=$('legend'); el.innerHTML='';
+  const E=v=>edge(m,v);
+  const labels=[`${E(b[0])} 미만`,`${E(b[0])}–${E(b[1])}`,`${E(b[1])}–${E(b[2])}`,`${E(b[2])}–${E(b[3])}`,`${E(b[3])} 이상`];
+  labels.forEach((txt,i)=>{
+    const c=i+1, n=D.filter(d=>cls(val(d,m),b)===c).length;
+    const bt=document.createElement('button'); bt.className='lg'; bt.setAttribute('aria-pressed',filt===c);
+    bt.innerHTML=`<span class="sw" data-c="${c}"></span><span>${txt}</span><small>${n}곳</small>`;
+    bt.onclick=()=>{filt=(filt===c)?null:c;paint()};
+    el.appendChild(bt);
+  });
+}
+
+function breakdown(d){
+  const c=cat(), dm=dom();
+  if(dm==='private'){
+    const a=arr(d), tot=a.reduce((x,y)=>x+y,0);
+    const rows=['art','kor','math','both','eng','etc'].map(k=>`<li class="${k===c?'cur':''}"><span>${PCATN[k]}</span><span>${nf(a[IDX[k]])}곳</span><span class="rk">${(a[IDX[k]]/tot*100).toFixed(1)}%</span></li>`).join('');
+    return `<p class="sub">학원 분류 (${scNoun()} ${nf(tot)}곳)</p><ul class="rows tight">${rows}</ul>`;
+  }
+  if(dm==='public'){
+    const rows=['kg','el','mid','high'].map(k=>{const [S,T]=d.P[k];
+      return `<li class="${k===c?'cur':''}"><span>${LVN[k]}</span><span>${(S/T).toFixed(1)}명</span><span class="rk">교원 ${nf(T)}명</span></li>`}).join('');
+    return `<p class="sub">학교급별 교원 1인당 학생 수</p><ul class="rows tight">${rows}</ul>`;
+  }
+  const E=d.E, hl=k=>k===c||(c==='spau'&&(k==='sp'||k==='au'));
+  const rows=['gen','voc','sp','au','oth'].map(k=>`<li class="${hl(k)?'cur':''}"><span>${PATHN[k]}</span><span>${nf(E[k])}명</span><span class="rk">${(E[k]/E.grad*100).toFixed(1)}%</span></li>`).join('');
+  return `<p class="sub">진학 유형 (중학교 졸업자 ${nf(E.grad)}명 · 진학 ${(E.adm/E.grad*100).toFixed(1)}%)</p><ul class="rows tight">${rows}</ul>`;
+}
+
+const JUMPS=[
+  {k:'private',t:'사설교육',l:'학생 1만 명당 학원 수',v:d=>d.per10k.toFixed(1)+'곳',p:{metric:'per10k',cat:'all'}},
+  {k:'public',t:'공교육',l:'초·중·고 교원 1인당 학생 수',v:d=>{const [S,T]=lv(d,'tot');return (S/T).toFixed(1)+'명'},p:{metric:'ratio',cat:'tot'}},
+  {k:'path',t:'진학',l:'특목·자율고 진학률(합산)',v:d=>(pc(d,'spau')/d.E.grad*100).toFixed(1)+'%',p:{metric:'rate',cat:'spau'}}
+];
+function jumps(d){
+  const li=JUMPS.map((j,i)=>`<li><button class="jump" data-i="${i}" ${j.k===dom()?'aria-current="true"':''}><span class="dm">${j.t}</span><span>${j.l}</span><span>${j.v(d)}</span></button></li>`).join('');
+  return `<p class="sub">다른 영역 보기</p><ul class="jumps">${li}</ul>`;
+}
+
+function card(name){
+  const c=$('card'), isD=!!name, d=isD?D.find(o=>o.name===name):SEO, m=met();
+  const row=k=>`<li class="${k===m?'cur':''}"><span>${tabName(k)}</span><span>${full(k,val(d,k))}${unit(k)}</span><span class="rk">${isD?rankOf(d,k)+'위':''}</span></li>`;
+  c.innerHTML=`<h2>${d.name}</h2><ul class="rows">${metrics().map(row).join('')}</ul>${pinned&&isD&&pinned===name?'<button class="reset" id="reset">선택 해제</button>':''}`;
+  const r=$('reset'); if(r) r.onclick=()=>{pinned=null;paint()};
+}
+
+function insight(){
+  const m=met();
+  if(dom()==='private'&&cat()==='all'&&m==='per10k') return STATIC_INSIGHT;
+  const l=D.slice().sort((a,z)=>val(z,m)-val(a,m));
+  const f=d=>`${d.name}(${full(m,val(d,m))}${m==='rate'?'':unit(m)})`;
+  return `${title()} 기준으로 가장 높은 곳은 ${f(l[0])}, ${f(l[1])}, ${f(l[2])}이고, 가장 낮은 곳은 ${f(l[l.length-1])}입니다.`;
+}
+
+// hover only refreshes the highlight, card and rank marker, so controls are not rebuilt under the cursor
+function hv(){
+  if(dom()==='ov'){ hvOv(); return; }
+  const active=hover||pinned;
+  if(dom()==='rel'){ $('hl').setAttribute('d',active?D.find(o=>o.name===active).d:''); relCard(active); hvScatter(active); return; }
+  if(dom()==='combo'){ applyActive(); comboCard(active); return; }
+  $('hl').setAttribute('d',active?D.find(o=>o.name===active).d:'');
+  card(active);
+  document.querySelectorAll('#rank button').forEach(b=>b.classList.toggle('on',b.dataset.name===active));
+}
+function paint(){
+  document.body.dataset.dom=dom();
+  const isOv=dom()==='ov';
+  $('layout').hidden=isOv; $('ov').hidden=!isOv; document.body.classList.toggle('ovmode',isOv);
+  if(isOv){ paintOv(); return; }
+  $('map').dataset.mode=dom()==='rel'?'rel':'std';
+  const cm=dom()==='combo';
+  $('mapbox').hidden=cm; $('combo').hidden=!cm; $('legend').hidden=cm; $('tabs').hidden=cm; $('chips').hidden=cm;
+  $('relcard').hidden=dom()!=='rel'; $('chips2').hidden=dom()!=='rel';
+  { const host=cm?$('legcol'):$('mapbox'); if($('card').parentNode!==host) host.appendChild($('card')); }
+  if(cm){ paintCombo(); return; }
+  if(dom()==='rel'){ paintRel(); return; }
+  $('chips2').innerHTML='';
+  const m=met(), b=breaks(), active=hover||pinned;
+  D.forEach(d=>{
+    const v=val(d,m), c=cls(v,b), p=cellEls[d.name], l=lblEls[d.name];
+    p.setAttribute('data-c',c);
+    p.setAttribute('aria-label',`${d.name}, ${title()} ${full(m,v)}${unit(m)}`);
+    const dim=filt&&filt!==c;
+    p.classList.toggle('dim',!!dim); l.t.classList.toggle('dim',!!dim);
+    l.t.setAttribute('data-c',c); l.v.textContent=short(m,v);
+  });
+  $('hl').setAttribute('d',active?D.find(o=>o.name===active).d:'');
+  { const L=D.slice().sort((a,z)=>val(z,m)-val(a,m)); RANKTXT={}; L.forEach((d,i)=>{RANKTXT[d.name]=(i+1)+'위'}); }
+  doms(); tabs(); chips(); legend(); card(active); place(); syncView();
+}
+
+// ---------------- 관계 보기 ----------------
+let REL=[], scPts={};
+function xv(d){
+  const x=ST.rel.x;
+  if(x==='all') return d.per10k;
+  const a=arr(d);
+  const c=x==='subj'?a[1]+a[2]+a[3]+a[4]:a[IDX[x]];
+  return c/d.students*1e4;
+}
+const yv=d=>pc(d,ST.rel.y)/d.E.grad*100;
+const statKey=()=>`${ST.rel.x}|${ST.rel.x==='all'?'A':scope}|${ST.rel.y}`;
+const sg=v=>(v<0?'−':'+')+Math.abs(v).toFixed(2);
+const fp=p=>p<0.001?'< 0.001':p.toFixed(3);
+const xLabel=()=>`학생 1만 명당 ${XN[ST.rel.x]} 수`;
+function relData(){
+  const xs=D.map(xv), ys=D.map(yv), sx=[...xs].sort((a,b)=>a-b), sy=[...ys].sort((a,b)=>a-b);
+  const tx=[sx[8],sx[17]], ty=[sy[8],sy[17]], t=(v,h)=>v<h[0]?1:(v<h[1]?2:3);
+  REL=D.map((d,i)=>{const cx=t(xs[i],tx), cy=t(ys[i],ty); return {d,x:xs[i],y:ys[i],cx,cy,c:(cy-1)*3+cx}});
+}
+function chipsRel(){
+  const el=$('chips'), el2=$('chips2'); el.innerHTML='<span class="cap">학원 밀도(가로)</span>'; el2.innerHTML='<span class="cap">진학률(세로)</span>';
+  RELX.forEach(c=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=c.t; b.setAttribute('aria-pressed',c.k===ST.rel.x);
+    b.onclick=()=>{ST.rel.x=c.k;filt=null;paint()}; el.appendChild(b);
+  });
+  if(ST.rel.x!=='all'){
+    const s=document.createElement('span'); s.className='sep'; el.appendChild(s);
+    [['A','학원만'],['AG','교습소 포함']].forEach(([k,tx])=>{
+      const b=document.createElement('button'); b.className='chip'; b.textContent=tx; b.setAttribute('aria-pressed',(k==='A')===(scope==='A'));
+      b.onclick=()=>{scope=(k==='A')?'A':'AG';filt=null;paint()}; el.appendChild(b);
+    });
+  }
+  RELY.forEach(k=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=k==='spau'?'특목·자율 합산':PATHN[k]; b.setAttribute('aria-pressed',k===ST.rel.y);
+    b.onclick=()=>{ST.rel.y=k;filt=null;paint()}; el2.appendChild(b);
+  });
+}
+function legendRel(){
+  const el=$('legend'); el.innerHTML='';
+  const wrap=document.createElement('div'); wrap.className='biv';
+  wrap.innerHTML='<div class="bv-y"><span>진학률 높음</span><span>낮음</span></div><div class="bv-grid"></div><div class="bv-x"><span>학원 밀도 낮음</span><span>높음</span></div>';
+  const g=wrap.querySelector('.bv-grid');
+  [3,2,1].forEach(row=>[1,2,3].forEach(col=>{
+    const c=(row-1)*3+col, n=REL.filter(o=>o.c===c).length;
+    const b=document.createElement('button'); b.className='bv'; b.dataset.c=c; b.innerHTML=`<span>${n}</span>`;
+    b.setAttribute('aria-pressed',filt===c); b.setAttribute('aria-label',`학원 밀도 ${['낮음','중간','높음'][col-1]}, 진학률 ${['낮음','중간','높음'][row-1]}: ${n}곳`);
+    b.onclick=()=>{filt=(filt===c)?null:c;paint()}; g.appendChild(b);
+  }));
+  el.appendChild(wrap);
+  const p=document.createElement('p'); p.className='bvnote'; p.textContent='칸 안의 숫자는 해당하는 구의 수입니다. 두 값을 각각 하위·중간·상위 3등분했어요.'; el.appendChild(p);
+}
+function niceTicks(lo,hi,n){
+  const raw=(hi-lo)/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/mag;
+  const step=(f<1.5?1:f<3?2:f<7?5:10)*mag, s=Math.floor(lo/step)*step, e=Math.ceil(hi/step)*step, t=[];
+  for(let v=s;v<=e+step/2;v+=step) t.push(+v.toFixed(6));
+  return t;
+}
+const SC={W:420,H:300,L:46,R:14,T:12,B:46};
+function drawScatter(){
+  const svg=$('sc'); scPts={};
+  const xs=REL.map(o=>o.x), ys=REL.map(o=>o.y);
+  const xt=niceTicks(Math.min(...xs),Math.max(...xs),5), yt=niceTicks(Math.min(...ys),Math.max(...ys),5);
+  const x0=xt[0], x1=xt[xt.length-1], y0=yt[0], y1=yt[yt.length-1];
+  const X=v=>SC.L+(v-x0)/(x1-x0)*(SC.W-SC.L-SC.R), Y=v=>SC.H-SC.B-(v-y0)/(y1-y0)*(SC.H-SC.T-SC.B);
+  const mx=xs.reduce((a,b)=>a+b)/25, my=ys.reduce((a,b)=>a+b)/25;
+  const b1=xs.reduce((s,v,i)=>s+(v-mx)*(ys[i]-my),0)/xs.reduce((s,v)=>s+(v-mx)**2,0), a0=my-b1*mx;
+  const fx=v=>(Number.isInteger(v)?String(v):v.toFixed(1)), fy=v=>(Number.isInteger(v)?v:v.toFixed(1))+'%';
+  let h=`<defs><clipPath id="scclip"><rect x="${SC.L}" y="${SC.T}" width="${SC.W-SC.L-SC.R}" height="${SC.H-SC.T-SC.B}"/></clipPath></defs>`;
+  xt.forEach(v=>{h+=`<line class="grid" x1="${X(v)}" x2="${X(v)}" y1="${SC.T}" y2="${SC.H-SC.B}"/><text x="${X(v)}" y="${SC.H-SC.B+15}" text-anchor="middle">${fx(v)}</text>`});
+  yt.forEach(v=>{h+=`<line class="grid" x1="${SC.L}" x2="${SC.W-SC.R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${SC.L-6}" y="${Y(v)+4}" text-anchor="end">${fy(v)}</text>`});
+  h+=`<line class="axis" x1="${SC.L}" x2="${SC.W-SC.R}" y1="${SC.H-SC.B}" y2="${SC.H-SC.B}"/><line class="axis" x1="${SC.L}" x2="${SC.L}" y1="${SC.T}" y2="${SC.H-SC.B}"/>`;
+  h+=`<text x="${(SC.L+SC.W-SC.R)/2}" y="${SC.H-6}" text-anchor="middle">${xLabel()}</text>`;
+  h+=`<g clip-path="url(#scclip)"><line class="trend" x1="${X(x0)}" y1="${Y(a0+b1*x0)}" x2="${X(x1)}" y2="${Y(a0+b1*x1)}"/></g>`;
+  h+='<g id="scpts"></g><text id="sclbl" text-anchor="start" x="0" y="0"></text>';
+  svg.innerHTML=h;
+  const g=svg.querySelector('#scpts');
+  REL.forEach(o=>{
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('class','pt'); c.setAttribute('r',5.5); c.setAttribute('cx',X(o.x)); c.setAttribute('cy',Y(o.y));
+    c.style.fill=`var(--b${o.c})`; c.setAttribute('tabindex','0'); c.setAttribute('role','button');
+    c.setAttribute('aria-label',`${o.d.name}, ${xLabel()} ${o.x.toFixed(1)}, ${PATHN[ST.rel.y]} 진학률 ${o.y.toFixed(1)}%`);
+    const dim=filt&&filt!==o.c; c.style.opacity=dim?0.18:1;
+    c.addEventListener('mouseenter',()=>{hover=o.d.name;hv()}); c.addEventListener('mouseleave',()=>{hover=null;hv()});
+    c.addEventListener('focus',()=>{hover=o.d.name;hv()}); c.addEventListener('blur',()=>{hover=null;hv()});
+    c.addEventListener('click',()=>toggle(o.d.name));
+    c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(o.d.name)}});
+    g.appendChild(c); scPts[o.d.name]={c,px:X(o.x),py:Y(o.y)};
+  });
+}
+function hvScatter(active){
+  const lbl=document.getElementById('sclbl'); if(!lbl) return;
+  Object.entries(scPts).forEach(([n,p])=>{const on=n===active; p.c.classList.toggle('hot',on); p.c.setAttribute('r',on?8:5.5)});
+  if(active&&scPts[active]){
+    const p=scPts[active], right=p.px>SC.W*0.65;
+    lbl.textContent=active; lbl.setAttribute('text-anchor',right?'end':'start');
+    lbl.setAttribute('x',p.px+(right?-11:11)); lbl.setAttribute('y',p.py-9);
+  } else lbl.textContent='';
+}
+function reading(s){
+  const [r,pr,rho,prho]=s, a=Math.abs(rho), y=PATHN[ST.rel.y];
+  let t=a<0.2?`순위 기준으로는 학원 밀도와 ${y} 진학률의 관계가 거의 보이지 않습니다.`
+    :`순위 기준으로 학원 밀도가 높은 구일수록 ${y} 진학률이 ${rho>=0?'높은':'낮은'} 경향이 ${a<0.4?'약합니다':a<0.6?'중간 정도입니다':'뚜렷합니다'}.`;
+  if(prho<0.05) t+=' 25개 구 기준으로 우연이라고 보기는 어렵습니다.';
+  else if(a>=0.2) t+=' 다만 25개 구 기준으로는 우연과 구분되지 않습니다.';
+  if((pr<0.05)!==(prho<0.05)||Math.abs(r-rho)>0.25) t+=' 값 기준(r)과 순위 기준(ρ) 결과가 달라서, 서초·강남처럼 값이 큰 구가 결과를 끌고 있을 수 있어요.';
+  return t;
+}
+function relStats(){
+  const s=STATS[statKey()], [r,pr,rho,prho,lo,hi,rhoEx,pEx]=s;
+  const xs=REL.slice().sort((a,b)=>a.x-b.x), m=a=>a.reduce((q,o)=>q+o.y,0)/a.length;
+  const row=(l,v,k)=>`<li><span>${l}</span><span>${v}</span><span class="rk">${k||''}</span></li>`;
+  $('relstats').innerHTML=`<ul class="rows tight">
+    ${row('순위상관 ρ (Spearman)',sg(rho),'p '+fp(prho))}
+    ${row('ρ의 95% 신뢰구간',`${sg(lo)} ~ ${sg(hi)}`)}
+    ${row('값 기준 r (Pearson)',sg(r),'p '+fp(pr))}
+    ${row('강남구 제외 ρ',sg(rhoEx),'p '+fp(pEx))}
+    ${row('밀도 상위 8개 구 평균',m(xs.slice(-8)).toFixed(1)+'%')}
+    ${row('밀도 하위 8개 구 평균',m(xs.slice(0,8)).toFixed(1)+'%')}
+  </ul>
+  <p class="note reading">${reading(s)}</p>
+  <p class="note">이 값은 25개 구의 평균을 비교한 것이라 학생 개인의 학원 이용과 진학의 관계를 말해 주지 않습니다. 소득이나 학교 분포처럼 이 자료에 없는 요인은 통제하지 못했고, 상관이 인과를 뜻하지도 않아요.</p>`;
+  return reading(s);
+}
+function relCard(name){
+  const c=$('card'), o=name?REL.find(r=>r.d.name===name):null;
+  if(!o){ c.innerHTML=''; return; }
+  const rx=1+REL.filter(q=>q.x>o.x).length, ry=1+REL.filter(q=>q.y>o.y).length, W=['하위','중간','상위'];
+  c.innerHTML=`<h2>${o.d.name}</h2>
+    <ul class="rows">
+      <li><span>${xLabel()}</span><span>${o.x.toFixed(1)}곳</span><span class="rk">${rx}위</span></li>
+      <li><span>${PATHN[ST.rel.y]} 진학률</span><span>${o.y.toFixed(1)}%</span><span class="rk">${ry}위</span></li>
+    </ul>
+    ${pinned===name?'<button class="reset" id="reset">선택 해제</button>':''}`;
+  const r=$('reset'); if(r) r.onclick=()=>{pinned=null;paint()};
+}
+function paintRel(){
+  relData();
+  const active=hover||pinned;
+  D.forEach(d=>{
+    const o=REL.find(q=>q.d===d), p=cellEls[d.name], l=lblEls[d.name];
+    p.setAttribute('data-c',o.c);
+    p.setAttribute('aria-label',`${d.name}, ${xLabel()} ${o.x.toFixed(1)}, ${PATHN[ST.rel.y]} 진학률 ${o.y.toFixed(1)}%`);
+    const dim=filt&&filt!==o.c; p.classList.toggle('dim',!!dim); l.t.classList.toggle('dim',!!dim);
+    l.t.setAttribute('data-c',o.c); l.v.textContent=o.y.toFixed(1)+'%';
+  });
+  $('hl').setAttribute('d',active?D.find(o=>o.name===active).d:'');
+  doms(); $('tabs').innerHTML=''; chipsRel(); legendRel(); drawScatter();
+  const txt=relStats();
+  void txt;
+  RANKTXT={}; relCard(active); hvScatter(active); place(); syncView();
+}
+
+// ---------------- 종합 보기 (3D) ----------------
+const mkLv=k=>d=>{const [S,T]=lv(d,k);return S/T};
+const mkRate=k=>d=>pc(d,k)/d.E.grad*100;
+const IND = {
+  per10k:{g:'사설교육', t:'학생 1만 명당 사설학원 수', v:d=>d.per10k, f:v=>v.toFixed(1)},
+  subj10k:{g:'사설교육', t:'학생 1만 명당 교과 학원(국·수·영) 수', v:d=>(d.A[1]+d.A[2]+d.A[3]+d.A[4])/d.students*1e4, f:v=>v.toFixed(1)},
+  art10k:{g:'사설교육', t:'학생 1만 명당 예체능 학원 수', v:d=>d.A[0]/d.students*1e4, f:v=>v.toFixed(1)},
+  rTot:{g:'공교육', t:'초·중·고 교원 1인당 학생 수', v:mkLv('tot'), f:v=>v.toFixed(1)},
+  rEl:{g:'공교육', t:'초등학교 교원 1인당 학생 수', v:mkLv('el'), f:v=>v.toFixed(1)},
+  rMid:{g:'공교육', t:'중학교 교원 1인당 학생 수', v:mkLv('mid'), f:v=>v.toFixed(1)},
+  rHigh:{g:'공교육', t:'고등학교 교원 1인당 학생 수', v:mkLv('high'), f:v=>v.toFixed(1)},
+  gen:{g:'진학', t:'일반고 진학률', v:mkRate('gen'), f:v=>v.toFixed(1)+'%'},
+  voc:{g:'진학', t:'특성화고 진학률', v:mkRate('voc'), f:v=>v.toFixed(1)+'%'},
+  sp:{g:'진학', t:'특목고 진학률', v:mkRate('sp'), f:v=>v.toFixed(1)+'%'},
+  au:{g:'진학', t:'자율고 진학률', v:mkRate('au'), f:v=>v.toFixed(1)+'%'},
+  spau:{g:'진학', t:'특목·자율고 진학률(합산)', v:mkRate('spau'), f:v=>v.toFixed(1)+'%'}
+};
+const CHN = {h:'기둥 높이', c:'기둥 색', s:'공 색·크기'};
+const BALLC = ['#D6453D','#EE8A2C','#F2C230','#9BCB3C','#2FA866'];
+const BALLR = [5,7.5,10,12.5,15];   // 같은 구간의 크기(3D)
+const BALLPX = [10,14,18,22,26];     // 범례에 그리는 크기(px)   // 하위 → 상위(초록)
+let stg=null, stgFail=false, raf=0, autoOn=false;
+const ATOP={};   // district name -> top y of its column
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888888';
+
+function qbreaks(vals){
+  const s=[...vals].sort((a,b)=>a-b);
+  const inc=r=>r[0]>s[0]&&r.every((x,i)=>i===0||x>r[i-1]);
+  const q=[5,10,15,20].map(i=>s[i]);
+  for(const p of [2,3,4]){const r=q.map(x=>Number(x.toPrecision(p))); if(inc(r)) return r;}
+  const lo=s[0], hi=s[s.length-1];
+  return [1,2,3,4].map(i=>Number((lo+(hi-lo)*i/5).toPrecision(3)));
+}
+const parseRings=d=>d.split('M').filter(Boolean).map(s=>s.replace('Z','').split('L').map(p=>p.split(',').map(Number)));
+const CX=VBW/2, CY=VBH/2;
+
+function initStage(){
+  if(stg) return true;
+  if(stgFail) return false;
+  const host=$('stage');
+  const fail=msg=>{stgFail=true; host.insertAdjacentHTML('beforeend',`<p class="note" style="position:absolute;inset:0;padding:18px;margin:0">${msg}</p>`); return false};
+  if(typeof THREE==='undefined'||!THREE.OrbitControls) return fail('3D 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 열어 주세요.');
+  let renderer;
+  try{ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true}); }catch(e){ return fail('이 브라우저에서는 3D 화면을 표시할 수 없어요.'); }
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  host.insertBefore(renderer.domElement,host.firstChild);
+  const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(32,1,10,6000);
+  scene.add(new THREE.AmbientLight(0xffffff,0.7));
+  const sun=new THREE.DirectionalLight(0xffffff,0.55); sun.position.set(-300,700,400); scene.add(sun);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(VBW*1.12,VBH*1.12),new THREE.MeshBasicMaterial({color:0x888888})); ground.rotation.x=-Math.PI/2; ground.position.y=-1.5; ground.userData.isGround=true; scene.add(ground);
+  const group=new THREE.Group(); scene.add(group);
+  const controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enablePan=false; controls.minDistance=420; controls.maxDistance=4200; controls.maxPolarAngle=Math.PI/2.04;
+  controls.target.set(0,40,0);
+  controls.addEventListener('change',requestRender);
+  const shapes={};
+  D.forEach(d=>{
+    const r=parseRings(d.e||d.d), pts=ring=>ring.map(([x,y])=>new THREE.Vector2(x-CX,-(y-CY)));
+    const sh=new THREE.Shape(pts(r[0])); r.slice(1).forEach(h=>sh.holes.push(new THREE.Path(pts(h)))); shapes[d.name]=sh;
+  });
+  const labels={};
+  D.forEach(d=>{const e=document.createElement('div'); e.className='sl'; e.textContent=(d.name==='중구'?d.name:d.name.replace(/구$/,'')); $('stagelabels').appendChild(e); labels[d.name]=e;});
+  stg={renderer,scene,camera,group,controls,shapes,labels,ground,meshes:{},list:[]};
+  // pointer picking
+  const el=renderer.domElement, ray=new THREE.Raycaster(), mouse=new THREE.Vector2(); let down=null;
+  const pick=e=>{
+    const b=el.getBoundingClientRect();
+    mouse.set(((e.clientX-b.left)/b.width)*2-1,-((e.clientY-b.top)/b.height)*2+1);
+    ray.setFromCamera(mouse,camera);
+    const hit=ray.intersectObjects(stg.list,false)[0];
+    return hit?hit.object.userData.name:null;
+  };
+  el.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY]});
+  el.addEventListener('pointerup',e=>{
+    if(down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])<5){const n=pick(e); if(n) toggle(n); else if(pinned){pinned=null;paint()}}
+    down=null;
+  });
+  el.addEventListener('pointermove',e=>{
+    if(e.buttons) return;
+    const n=pick(e); el.style.cursor=n?'pointer':'grab';
+    if(n!==hover){hover=n;hv();}
+  });
+  el.addEventListener('pointerleave',()=>{if(hover){hover=null;hv();}});
+  const resize=()=>{
+    const w=host.clientWidth, h=host.clientHeight; if(!w||!h) return;
+    renderer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix(); requestRender();
+  };
+  if('ResizeObserver' in window) new ResizeObserver(resize).observe(host); else addEventListener('resize',resize);
+  document.querySelectorAll('.vb').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+  $('xray').onclick=()=>{xray=!xray; $('xray').setAttribute('aria-pressed',xray); applyActive();};
+  $('autorot').onclick=()=>{
+    autoOn=!autoOn; $('autorot').setAttribute('aria-pressed',autoOn);
+    controls.autoRotate=autoOn; controls.autoRotateSpeed=1.4; if(autoOn) tick();
+  };
+  resize();
+  setView('tilt');
+  return true;
+}
+function tick(){
+  if(!autoOn||!stg) return;
+  if(dom()!=='combo'){autoOn=false; stg.controls.autoRotate=false; $('autorot').setAttribute('aria-pressed','false'); return;}
+  stg.controls.update(); requestAnimationFrame(tick);
+}
+function setView(v){
+  if(!stg) return;
+  const k=Math.max(1,1.3/stg.camera.aspect), p=[{tilt:[0,1300,420],top:[0,1520,1],side:[0,200,1120]}[v]].map(a=>a.map(n=>n*k))[0];
+  stg.camera.position.set(...p); stg.controls.target.set(0,40,0); stg.controls.update(); requestRender();
+}
+function requestRender(){ if(!stg||raf) return; raf=requestAnimationFrame(()=>{raf=0; renderStage();}); }
+let _rc=null;
+function occluded(name,anchor){
+  if(!_rc) _rc=new THREE.Raycaster();
+  const cam=stg.camera.position, dir=anchor.clone().sub(cam), dist=dir.length(); dir.normalize();
+  _rc.set(cam,dir); _rc.far=dist-1.5;
+  for(const m of stg.list){
+    if(m.userData.name===name||!m.userData.box) continue;
+    if(!_rc.ray.intersectsBox(m.userData.box)) continue;
+    if(_rc.intersectObject(m,false).length) return true;
+  }
+  return false;
+}
+function renderStage(){
+  if(!stg) return;
+  stg.renderer.render(stg.scene,stg.camera);
+  const w=stg.renderer.domElement.clientWidth, h=stg.renderer.domElement.clientHeight, active=hover||pinned, items=[];
+  D.forEach(d=>{
+    const e=stg.labels[d.name];
+    if(ATOP[d.name]===undefined){e.style.display='none';return}
+    const anchor=new THREE.Vector3(d.cx-CX,ATOP[d.name],d.cy-CY), v=anchor.clone().project(stg.camera);
+    if(v.z>1||(!xray&&d.name!==active&&occluded(d.name,anchor))){e.style.display='none';return}
+    e.style.display='block';
+    const mesh=stg.meshes[d.name], op=mesh&&mesh.userData.op<1?0.4:1;
+    e.style.opacity=op;
+    items.push({e,name:d.name,x:(v.x*0.5+0.5)*w,y:(-v.y*0.5+0.5)*h,w:e.textContent.length*12+8});
+  });
+  items.sort((a,b)=>(a.name===active?-1:b.name===active?1:a.y-b.y));
+  const placed=[];
+  items.forEach(it=>{
+    let y=it.y, n=0;
+    while(n<5&&placed.some(p=>Math.abs(p.x-it.x)<(p.w+it.w)/2&&Math.abs(p.y-y)<14)){y-=14; n++;}
+    placed.push({x:it.x,y,w:it.w});
+    it.e.style.transform=`translate(${it.x}px,${y}px) translate(-50%,-125%)`;
+    it.e.classList.toggle('on',it.name===active);
+  });
+}
+function buildCombo(){
+  const s=stg, ch=ST.combo;
+  s.list=[]; s.meshes={};
+  for(let i=s.group.children.length-1;i>=0;i--){
+    const o=s.group.children[i];
+    o.traverse(n=>{if(n.geometry) n.geometry.dispose(); (Array.isArray(n.material)?n.material:(n.material?[n.material]:[])).forEach(x=>x.dispose());});
+    s.group.remove(o);
+  }
+  const hvals=D.map(IND[ch.h].v), cvals=D.map(IND[ch.c].v), svals=ch.s==='none'?null:D.map(IND[ch.s].v);
+  const lo=Math.min(...hvals), hi=Math.max(...hvals), sb=svals?qbreaks(svals):null;
+  stg.ground.material.color.set(cssVar('--line'));
+  const qb=qbreaks(cvals), cols=[1,2,3,4,5].map(k=>new THREE.Color(cssVar('--c'+k))), edge=new THREE.Color(cssVar('--surface'));
+  D.forEach((d,i)=>{
+    const height=10+(hi===lo?0.5:(hvals[i]-lo)/(hi-lo))*110;
+    const geo=new THREE.ExtrudeGeometry(s.shapes[d.name],{depth:height,bevelEnabled:false});
+    const base=cols[cls(cvals[i],qb)-1];
+    const mesh=new THREE.Mesh(geo,[new THREE.MeshLambertMaterial({color:base}),new THREE.MeshLambertMaterial({color:base.clone().multiplyScalar(0.7)})]); mesh.rotation.x=-Math.PI/2; mesh.userData={name:d.name};
+    mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,85),new THREE.LineBasicMaterial({color:edge,transparent:true,opacity:0.95})));
+    s.group.add(mesh); s.meshes[d.name]=mesh; s.list.push(mesh);
+    mesh.updateMatrixWorld(true); mesh.userData.box=new THREE.Box3().setFromObject(mesh);
+    let top=height+4;
+    if(svals){
+      const tier=cls(svals[i],sb)-1, r=BALLR[tier], ball=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),new THREE.MeshLambertMaterial({color:new THREE.Color(BALLC[tier])}));
+      ball.position.set(d.cx-CX,height+r+2,d.cy-CY); s.group.add(ball); top=height+2*r+6;
+    }
+    ATOP[d.name]=top;
+  });
+  applyActive();
+}
+let xray=false;
+const matsOf=m=>Array.isArray(m.material)?m.material:[m.material];
+function applyActive(){
+  if(!stg) return;
+  const active=hover||pinned;
+  Object.entries(stg.meshes).forEach(([n,m])=>{
+    let op=1;
+    if(pinned&&n!==pinned) op=0.2; else if(xray&&n!==active) op=0.42;
+    matsOf(m).forEach(x=>{x.emissive.setHex(n===active?0x4a4a4a:0x000000); x.opacity=op; x.transparent=op<1; x.depthWrite=op>=1; x.needsUpdate=true;});
+    if(m.children[0]) m.children[0].material.opacity=0.95*(op<1?Math.max(op,0.3):1);
+    m.userData.op=op;
+  });
+  requestRender();
+}
+function comboCtl(){
+  const el=$('comboctl');
+  if(!el.dataset.ready){
+    el.dataset.ready='1';
+    Object.keys(CHN).forEach(k=>{
+      const w=document.createElement('label'); w.className='sel'; w.innerHTML=`<span>${CHN[k]}</span>`;
+      const s=document.createElement('select'); s.id='sel-'+k; s.setAttribute('aria-label',CHN[k]+'에 표시할 지표');
+      if(k==='s'){const o=document.createElement('option'); o.value='none'; o.textContent='표시 안 함'; s.appendChild(o);}
+      ['사설교육','공교육','진학'].forEach(g=>{
+        const og=document.createElement('optgroup'); og.label=g;
+        Object.keys(IND).filter(i=>IND[i].g===g).forEach(i=>{const o=document.createElement('option'); o.value=i; o.textContent=IND[i].t; og.appendChild(o);});
+        s.appendChild(og);
+      });
+      s.onchange=()=>{ST.combo[k]=s.value;paint()};
+      w.appendChild(s); el.appendChild(w);
+    });
+    const dw=document.createElement('label'); dw.className='sel'; dw.innerHTML='<span>구 선택</span>';
+    const ds=document.createElement('select'); ds.id='sel-d'; ds.setAttribute('aria-label','강조할 구 선택');
+    ds.innerHTML='<option value="">선택 안 함</option>'+D.map(o=>o.name).sort().map(n=>`<option value="${n}">${n}</option>`).join('');
+    ds.onchange=()=>{pinned=ds.value||null; paint()};
+    dw.appendChild(ds); el.appendChild(dw);
+  }
+  Object.keys(CHN).forEach(k=>{$('sel-'+k).value=ST.combo[k]});
+  $('sel-d').value=pinned||'';
+}
+function comboLegend(){
+  const ch=ST.combo, tiers=(key,pal,rev)=>{
+    const vals=D.map(IND[ch[key]].v), b=qbreaks(vals), F=v=>IND[ch[key]].f(v);
+    const labels=[`${F(b[0])} 미만`,`${F(b[0])}–${F(b[1])}`,`${F(b[1])}–${F(b[2])}`,`${F(b[2])}–${F(b[3])}`,`${F(b[3])} 이상`];
+    const idx=[0,1,2,3,4]; if(rev) idx.reverse();
+    return idx.map(i=>`<span class="lg">${pal(i)}<span>${labels[i]}</span><small>${vals.filter(v=>cls(v,b)===i+1).length}곳</small></span>`).join('');
+  };
+  const sq=i=>`<span class="sw" data-c="${i+1}"></span>`;
+  const dot=i=>`<span class="bx"><span style="display:block;width:${BALLPX[i]}px;height:${BALLPX[i]}px;background:${BALLC[i]};border-radius:50%"></span></span>`;
+  $('combolegend').innerHTML=`${ch.s==='none'?'':`<p><b>공 색·크기</b>: ${IND[ch.s].t}<br>초록·큰 공일수록 값이 큰 구</p><div class="legend">${tiers('s',dot,true)}</div>`}
+    <p><b>기둥 색</b>: ${IND[ch.c].t}</p><div class="legend">${tiers('c',sq,true)}</div>`;
+}
+function comboCard(name){
+  const c=$('card'), ch=ST.combo, keys=['h','c','s'].filter(k=>ch[k]!=='none');
+  if(!name){ c.innerHTML=''; return; }
+  const d=D.find(o=>o.name===name), W=['하위','중간','상위'];
+  const rows=keys.map(k=>{
+    const f=IND[ch[k]], vals=D.map(f.v), v=f.v(d), rk=1+vals.filter(x=>x>v).length;
+    return `<li><span>${CHN[k]}</span><span>${f.f(v)}</span><span class="rk">${rk}위</span></li>`;
+  }).join('');
+  const lvl=keys.map(k=>{
+    const vals=D.map(IND[ch[k]].v).sort((a,b)=>a-b), v=IND[ch[k]].v(d), i=vals.indexOf(v);
+    return `${CHN[k]}(${IND[ch[k]].g}) ${W[i<8?0:(i<17?1:2)]}`;
+  });
+  c.innerHTML=`<h2>${d.name}</h2>
+    <ul class="rows">${rows}</ul>
+    ${pinned===name?'<button class="reset" id="reset">선택 해제</button>':''}`;
+  const r=$('reset'); if(r) r.onclick=()=>{pinned=null;paint()};
+}
+function paintCombo(){
+  doms(); comboCtl();
+  const ok=initStage(), ch=ST.combo;
+  comboLegend(); comboCard(hover||pinned);
+  if(ok){buildCombo(); requestRender();}
+}
+// re-color the 3D scene when the viewer switches light/dark
+if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(stg&&dom()==='combo') paint()});
+new MutationObserver(()=>{if(stg&&dom()==='combo') paint()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+// ---------------- 한눈에 보기 (지도 3장을 한 화면에) ----------------
+const OVP=[
+  {k:'a', g:'사설교육', ids:['per10k','subj10k','art10k']},
+  {k:'b', g:'공교육', ids:['rTot','rEl','rMid','rHigh']},
+  {k:'c', g:'진학', ids:['spau','gen','voc','sp','au']}
+];
+let OV=null;
+const OVW=['상위','중간','하위'];
+function ranks(vals){ return vals.map(v=>1+vals.filter(x=>x>v).length); }
+function avgRank(vals){
+  const idx=vals.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]), r=new Array(vals.length);
+  for(let i=0;i<idx.length;){let j=i; while(j+1<idx.length&&idx[j+1][0]===idx[i][0]) j++; const a=(i+j)/2+1; for(let q=i;q<=j;q++) r[idx[q][1]]=a; i=j+1;}
+  return r;
+}
+function spearman(x,y){
+  const a=avgRank(x), b=avgRank(y), n=a.length, ma=a.reduce((s,v)=>s+v,0)/n, mb=b.reduce((s,v)=>s+v,0)/n;
+  let sxy=0,sxx=0,syy=0; for(let i=0;i<n;i++){const u=a[i]-ma, v=b[i]-mb; sxy+=u*v; sxx+=u*u; syy+=v*v;}
+  return sxy/Math.sqrt(sxx*syy);
+}
+const ovShort=n=>n==='중구'?n:n.replace(/구$/,'');
+function buildOv(){
+  OV={cells:{},lbls:{}};
+  const host=$('ovgrid');
+  const card=document.createElement('section'); card.className='ovp'; card.dataset.p=ST.ov.L;
+  card.innerHTML=`<div class="ovh"><span class="g"></span><select aria-label="지표 선택"></select></div>
+    <div class="ovbox"><svg viewBox="0 0 ${VBW} ${VBH}" role="group" aria-label="서울 자치구 지도"><g class="cells"></g><path class="hl" d=""></path><g class="lbls"></g></svg></div>
+    <div class="ovfoot"><div class="card dock" id="ovstrip" aria-live="polite"></div><div class="ovl"></div></div>`;
+  OV.card=card; OV.g=card.querySelector('.g'); OV.sel=card.querySelector('select');
+  OV.svg=card.querySelector('svg'); OV.hl=card.querySelector('.hl'); OV.legend=card.querySelector('.ovl');
+  OV.sel.onchange=()=>{ST.ov[ST.ov.L]=OV.sel.value; paint();};
+  const gc=card.querySelector('.cells'), gl=card.querySelector('.lbls');
+  D.forEach(d=>{
+    const c=document.createElementNS(NS,'path'); c.setAttribute('d',d.d); c.setAttribute('class','cell'); c.setAttribute('tabindex','0'); c.setAttribute('role','button');
+    c.addEventListener('mouseenter',()=>{hover=d.name;hv()}); c.addEventListener('mouseleave',()=>{hover=null;hv();hideOvTip()});
+    c.addEventListener('focus',()=>{hover=d.name;hv()}); c.addEventListener('blur',()=>{hover=null;hv()});
+    c.addEventListener('click',()=>toggle(d.name));
+    c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(d.name)}});
+    c.addEventListener('pointermove',e=>showOvTip(e));
+    gc.appendChild(c); OV.cells[d.name]=c;
+    const t=document.createElementNS(NS,'text'); t.setAttribute('class','lbl');
+    const n=document.createElementNS(NS,'tspan'), v=document.createElementNS(NS,'tspan');
+    n.setAttribute('class','n'); n.setAttribute('x',d.cx); n.setAttribute('dy','-0.1em'); n.textContent=ovShort(d.name);
+    v.setAttribute('class','v'); v.setAttribute('x',d.cx); v.setAttribute('dy','1.25em');
+    t.setAttribute('x',d.cx); t.setAttribute('y',d.cy); t.appendChild(n); t.appendChild(v);
+    gl.appendChild(t); OV.lbls[d.name]={t,n,v};
+  });
+  host.appendChild(card);
+  if('ResizeObserver' in window) new ResizeObserver(placeOv).observe(host); else addEventListener('resize',placeOv);
+}
+function placeOv(){
+  if(!OV||!OV.svg) return;
+  const w=OV.svg.getBoundingClientRect().width||VBW, s=w/VBW, fs=(w<300?9.5:12)/s;
+  Object.values(OV.lbls).forEach(l=>{l.t.setAttribute('font-size',fs); l.v.setAttribute('font-size',fs*0.85);});
+}
+const edgeOv=(ind,v)=>{const s=ind.f(v); return s.endsWith('%')?String(+v.toFixed(1))+'%':(s.includes('.')?String(+v.toFixed(1)):s);};
+function dotStrip(k,i,o){
+  const vals=o[k].vals, lo=Math.min(...vals), hi=Math.max(...vals), span=hi-lo||1, X=v=>8+(v-lo)/span*184;
+  const sv=o[k].ind.v(SEO), c=i>=0?cls(vals[i],o[k].b):0;
+  let h=`<svg class="dstrip" viewBox="0 0 200 30" role="img" aria-label="25개 구 중 위치"><line class="ln" x1="8" x2="192" y1="13" y2="13"/>`;
+  vals.forEach((v,j)=>{ if(j!==i) h+=`<circle class="dt" cx="${X(v)}" cy="13" r="2.6"/>`; });
+  h+=`<line class="tk" x1="${X(sv)}" x2="${X(sv)}" y1="5" y2="21"><title>서울 전체 ${o[k].ind.f(sv)}</title></line><text x="${X(sv)}" y="29" text-anchor="middle">서울 전체</text>`;
+  if(i>=0) h+=`<circle class="sel" cx="${X(vals[i])}" cy="13" r="5.5" style="fill:var(--p${k}${c})"/>`;
+  return h+'</svg>';
+}
+function ovData(){
+  const o={};
+  ['a','b','c'].forEach(k=>{
+    const ind=IND[ST.ov[k]], vals=D.map(ind.v);
+    o[k]={ind,vals,ranks:ranks(vals),b:qbreaks(vals)};
+  });
+  return o;
+}
+function hideOvTip(){$('ovtip').hidden=true}
+function showOvTip(e){
+  const tip=$('ovtip');
+  if(e.pointerType!=='mouse'||!hover){tip.hidden=true;return}
+  const d=D.find(o=>o.name===hover), i=D.indexOf(d), o=ovData();
+  tip.innerHTML=`<b>${hover}</b>`+['a','b','c'].map(k=>`<br>${OVP.find(p=>p.k===k).g} · ${o[k].ind.f(o[k].vals[i])} <span style="color:var(--muted)">(${o[k].ranks[i]}위)</span>`).join('');
+  tip.hidden=false;
+  const b=$('ov').getBoundingClientRect(); let x=e.clientX-b.left+14, y=e.clientY-b.top+14;
+  if(x+tip.offsetWidth>b.width-4) x=e.clientX-b.left-tip.offsetWidth-14;
+  tip.style.left=Math.max(4,x)+'px'; tip.style.top=y+'px';
+}
+function ovStrip(name,o){
+  const el=$('ovstrip'), i=name?D.findIndex(d=>d.name===name):-1;
+  const rows=['a','b','c'].map(k=>{
+    const p=OVP.find(q=>q.k===k), ind=o[k].ind, v=i>=0?o[k].vals[i]:ind.v(SEO), on=k===ST.ov.L;
+    const meta=i>=0?`<span class="sw" data-c="${cls(v,o[k].b)}"></span>${o[k].ranks[i]}위`:'서울 전체';
+    return `<div class="ovc${on?' on':''}" data-p="${k}" data-k="${k}" role="button" tabindex="0" aria-pressed="${on}" title="${ind.t}"><span class="gg">${p.g}</span><span class="vv">${ind.f(v)}</span><span class="rr">${meta}</span></div>`;
+  }).join('');
+  el.innerHTML=`<div class="ovn">${name||'서울 전체'}</div>${rows}${pinned&&name===pinned?'<button class="reset" id="ovreset">선택 해제</button>':''}`;
+  el.querySelectorAll('.ovc').forEach(c=>{const go=()=>{ST.ov.L=c.dataset.k; paint();}; c.onclick=go; c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};});
+  const r=$('ovreset'); if(r) r.onclick=()=>{pinned=null;paint()};
+}
+function hvOv(){
+  if(!OV) return;
+  const active=hover||pinned, o=ovData();
+  OV.hl.setAttribute('d',active?D.find(d=>d.name===active).d:'');
+  ovStrip(active,o);
+}
+function paintOv(){
+  if(!OV) buildOv();
+  doms();
+  const o=ovData(), L=ST.ov.L, P=OVP.find(p=>p.k===L), ind=o[L].ind, vals=o[L].vals, b=o[L].b;
+  OV.card.dataset.p=L;
+  OV.g.textContent=P.g;
+  OV.sel.innerHTML=''; P.ids.forEach(id=>{const op=document.createElement('option'); op.value=id; op.textContent=IND[id].t; OV.sel.appendChild(op);});
+  OV.sel.value=ST.ov[L]; OV.sel.setAttribute('aria-label',P.g+' 지표');
+  D.forEach((d,i)=>{
+    const c=cls(vals[i],b), cell=OV.cells[d.name], l=OV.lbls[d.name];
+    cell.setAttribute('data-c',c); l.t.setAttribute('data-c',c); l.v.textContent=ind.f(vals[i]);
+    cell.setAttribute('aria-label',`${d.name}, ${ind.t} ${ind.f(vals[i])}, 25개 구 중 ${o[L].ranks[i]}위`);
+  });
+  OV.legend.innerHTML=`<div class="row"><span>${ind.f(Math.min(...vals))}</span><span class="ramp">${[1,2,3,4,5].map(c=>`<i class="sw" data-c="${c}"></i>`).join('')}</span><span>${ind.f(Math.max(...vals))}</span></div><div class="ovb">구간 경계 ${b.map(x=>edgeOv(ind,x)).join(' · ')}</div>`;
+  placeOv(); hvOv();
+}
+
+let RANKTXT={};
+function place(){
+  const w=$('map').getBoundingClientRect().width||VBW, s=w/VBW, narrow=w<520, k=view.k;
+  const grow=Math.min(1.7,1+0.22*(k-1));
+  const nfz=(narrow?9.5:12)*grow/(s*k), vf=(narrow?8.5:10.5)*grow/(s*k);
+  D.forEach(d=>{
+    const l=lblEls[d.name];
+    l.t.setAttribute('x',d.cx); l.t.setAttribute('y',d.cy);
+    l.n.setAttribute('x',d.cx); l.n.setAttribute('dy',(-vf*0.1)+'');
+    l.n.setAttribute('font-size',nfz);
+    l.v.setAttribute('x',d.cx); l.v.setAttribute('dy',(vf*1.25)+'');
+    l.v.setAttribute('font-size',vf);
+    l.r.setAttribute('x',d.cx); l.r.setAttribute('dy',(vf*1.25)+''); l.r.setAttribute('font-size',vf);
+    l.r.textContent=(k>=1.6&&RANKTXT[d.name])?RANKTXT[d.name]:'';
+  });
+}
+// ---------------- 확대·이동 (세계지도처럼 끌어서 보기) ----------------
+const view={x:0,y:0,k:1};
+const BB={};
+D.forEach(d=>{
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  d.d.split(/[MLZ]/).filter(Boolean).forEach(p=>{const [x,y]=p.split(',').map(Number); if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y;});
+  BB[d.name]={x0,y0,x1,y1};
+});
+let suppress=false, lastPinned=null, anim=0;
+const reduceMotion=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clampView=v=>{
+  const k=Math.min(8,Math.max(1,v.k));
+  return {k,x:Math.min(0,Math.max(VBW*(1-k),v.x)),y:Math.min(0,Math.max(VBH*(1-k),v.y))};
+};
+function applyView(){
+  const svg=$('map');
+  $('vp').setAttribute('transform',`translate(${view.x},${view.y}) scale(${view.k})`);
+  svg.style.setProperty('--k',view.k);
+  svg.style.touchAction=view.k>1.01?'none':'pan-y';
+  place();
+}
+function setMapView(v){Object.assign(view,clampView(v)); applyView();}
+function animateTo(target){
+  const tg=clampView(target); cancelAnimationFrame(anim);
+  if(reduceMotion){Object.assign(view,tg); applyView(); return;}
+  const s0={...view}, t0=performance.now(), dur=480;
+  const step=now=>{
+    const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+    Object.assign(view,{k:s0.k+(tg.k-s0.k)*e,x:s0.x+(tg.x-s0.x)*e,y:s0.y+(tg.y-s0.y)*e});
+    applyView(); if(p<1) anim=requestAnimationFrame(step);
+  };
+  anim=requestAnimationFrame(step);
+}
+function zoomToDistrict(name){
+  const b=BB[name], w=b.x1-b.x0, h=b.y1-b.y0, cx=(b.x0+b.x1)/2, cy=(b.y0+b.y1)/2;
+  const k=Math.min(5.5,Math.max(1.8,Math.min(VBW/(w*2.4),VBH/(h*2.4))));
+  animateTo({k,x:VBW/2-k*cx,y:VBH/2-k*cy});
+}
+function zoomAt(cx,cy,nk){
+  const r=$('map').getBoundingClientRect(), ux=(cx-r.left)/r.width*VBW, uy=(cy-r.top)/r.height*VBH;
+  nk=Math.min(8,Math.max(1,nk)); const f=nk/view.k; cancelAnimationFrame(anim);
+  setMapView({k:nk,x:ux-(ux-view.x)*f,y:uy-(uy-view.y)*f});
+}
+function zoomBy(f){
+  const nk=Math.min(8,Math.max(1,view.k*f)), g=nk/view.k, ux=VBW/2, uy=VBH/2;
+  animateTo({k:nk,x:ux-(ux-view.x)*g,y:uy-(uy-view.y)*g});
+}
+function syncView(){
+  if(dom()==='combo') return;
+  if(pinned!==lastPinned){ lastPinned=pinned; if(pinned) zoomToDistrict(pinned); else animateTo({k:1,x:0,y:0}); }
+}
+function tipHtml(name){
+  const d=D.find(o=>o.name===name);
+  if(dom()==='rel'){const o=REL.find(q=>q.d===d); if(!o) return ''; return `<b>${name}</b><br>${xLabel()} ${o.x.toFixed(1)}<br>${PATHN[ST.rel.y]} 진학률 ${o.y.toFixed(1)}%`;}
+  const m=met(); return `<b>${name}</b><br>${title()} ${full(m,val(d,m))}${unit(m)}<br>25개 구 중 ${rankOf(d,m)}위`;
+}
+function hideTip(){$('tip').hidden=true}
+function showTip(e){
+  const tip=$('tip');
+  if(e.pointerType!=='mouse'||!hover){tip.hidden=true;return}
+  tip.innerHTML=tipHtml(hover); tip.hidden=false;
+  const b=$('mapbox').getBoundingClientRect(); let x=e.clientX-b.left+14, y=e.clientY-b.top+14;
+  if(x+tip.offsetWidth>b.width-4) x=e.clientX-b.left-tip.offsetWidth-14;
+  if(y+tip.offsetHeight>b.height-4) y=e.clientY-b.top-tip.offsetHeight-14;
+  tip.style.left=Math.max(4,x)+'px'; tip.style.top=Math.max(4,y)+'px';
+}
+(function(){
+  const svg=$('map'), ptrs=new Map(); let pan=null, pinch=null, dragging=false;
+  svg.addEventListener('wheel',e=>{
+    e.preventDefault(); hideTip();
+    const dy=e.deltaMode===1?e.deltaY*16:e.deltaY;
+    zoomAt(e.clientX,e.clientY,view.k*Math.exp(-dy*(e.ctrlKey?0.012:0.0016)));
+  },{passive:false});
+  svg.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'&&e.button!==0) return;
+    ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(ptrs.size===1) pan={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y,id:e.pointerId};
+    if(ptrs.size===2){const [a,b]=[...ptrs.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,k:view.k}; pan=null; dragging=true; hideTip();}
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(ptrs.has(e.pointerId)) ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pinch&&ptrs.size===2){const [a,b]=[...ptrs.values()]; zoomAt((a.x+b.x)/2,(a.y+b.y)/2,pinch.k*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d); return;}
+    if(pan&&ptrs.size===1&&e.pointerId===pan.id){
+      const dx=e.clientX-pan.x, dy=e.clientY-pan.y;
+      if(!dragging&&Math.hypot(dx,dy)>5){
+        if(view.k<=1.01&&e.pointerType!=='mouse'){pan=null;return}
+        dragging=true; try{svg.setPointerCapture(e.pointerId)}catch(_){} hideTip(); cancelAnimationFrame(anim);
+      }
+      if(dragging){const r=svg.getBoundingClientRect(); setMapView({k:view.k,x:pan.vx+dx/r.width*VBW,y:pan.vy+dy/r.height*VBH}); svg.style.cursor='grabbing';}
+    }
+    if(!dragging) showTip(e);
+  });
+  const end=e=>{
+    ptrs.delete(e.pointerId); if(ptrs.size<2) pinch=null;
+    if(ptrs.size===0){ if(dragging){suppress=true; setTimeout(()=>{suppress=false},0);} dragging=false; pan=null; svg.style.cursor=''; }
+    else if(ptrs.size===1){const [id,p]=[...ptrs.entries()][0]; pan={x:p.x,y:p.y,vx:view.x,vy:view.y,id};}
+  };
+  svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+  svg.addEventListener('pointerleave',hideTip);
+  $('zin').onclick=()=>zoomBy(1.6); $('zout').onclick=()=>zoomBy(1/1.6); $('zreset').onclick=()=>animateTo({k:1,x:0,y:0});
+})();
+
+if('ResizeObserver' in window) new ResizeObserver(place).observe($('map')); else addEventListener('resize',place);
+paint();
+</script>
+</body>
+</html>
