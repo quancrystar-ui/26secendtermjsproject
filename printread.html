@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>지문 사주 · 나의 지문 읽기</title>
+<style>
+:root{--bg:#f6f3ec;--card:#fffdf8;--ink:#23252b;--sub:#6b6f7a;--line:#e2dccd;--acc:#2f5d8a;--acc2:#b5543c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171c;--card:#1e2128;--ink:#ece9e1;--sub:#9aa0ad;--line:#33373f;--acc:#7fb0e0;--acc2:#e08a72}}
+:root[data-theme="dark"]{--bg:#15171c;--card:#1e2128;--ink:#ece9e1;--sub:#9aa0ad;--line:#33373f;--acc:#7fb0e0;--acc2:#e08a72}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Serif KR","Apple SD Gothic Neo","Malgun Gothic",serif;line-height:1.65}
+main{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.7rem;margin:.4em 0 .1em;letter-spacing:-.02em}
+h2{font-size:1.15rem;margin:0 0 10px;color:var(--acc)}
+p.lead{color:var(--sub);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+.hands{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.hands{grid-template-columns:1fr}}
+.finger{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.finger:last-child{border:0}
+.finger b{min-width:3.2em;font-size:.9rem}
+.finger small{display:block;color:var(--sub);font-size:.72rem;line-height:1.2}
+select{flex:1;min-width:0;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px;min-height:44px}
+.glyphs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.glyph{text-align:center;font-size:.78rem;color:var(--sub)}
+.glyph svg{width:100%;max-width:70px;height:70px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+svg path,svg ellipse{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+button.main{width:100%;padding:14px;border:0;border-radius:12px;background:var(--acc);color:var(--bg);font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer}
+button.sub{min-height:40px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:.85rem;cursor:pointer;margin:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.atd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=number]{width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.tlist{display:grid;gap:12px}.tc{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.tc svg{width:92px;height:100px;border:1px solid var(--line);border-radius:10px;background:var(--card)}.tc h3{margin:0 0 2px;font-size:1rem}.tc .en{color:var(--sub);font-size:.78rem;font-weight:400}.tc dl{margin:6px 0 0;font-size:.84rem}.tc dt{display:inline;font-weight:700;color:var(--acc2)}.tc dd{display:inline;margin:0}.tc dd::after{content:"";display:block;height:3px}@media(max-width:420px){.tc{grid-template-columns:1fr}.tc svg{margin:0 auto}}
+#result{display:none}
+.hero{text-align:center}
+.hero .code{font-size:.9rem;color:var(--acc2);font-weight:700}
+.hero h3{font-size:1.3rem;margin:.2em 0}
+.hero svg{width:110px;height:110px}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.grid4{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.box h4{margin:0 0 6px;font-size:.95rem;color:var(--acc2)}
+.box p{margin:0;font-size:.9rem}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.85rem}
+.bar span.n{min-width:5.2em}
+.bar i{display:block;height:12px;border-radius:6px;background:var(--acc);min-width:2px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.wrap{overflow-x:auto}
+.note{font-size:.78rem;color:var(--sub);margin-top:18px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;background:var(--bg);border:1px solid var(--line);font-size:.78rem;margin:2px}
+.gl path,.gl ellipse{stroke:var(--c)}
+.emb{text-align:center}.emb svg{width:min(420px,100%);height:auto}
+.emb h3{font-size:1.6rem;margin:.1em 0 .4em;letter-spacing:-.02em}
+.chips span{display:inline-block;border:1.5px solid;border-radius:99px;padding:3px 12px;margin:3px;font-size:.88rem;font-weight:700}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.tiles{grid-template-columns:1fr}}
+.tile{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.tile svg{width:30px;height:30px;flex:none}
+.tile svg path{fill:none;stroke-width:1.8}
+.tile small{display:block;color:var(--sub);font-size:.72rem}.tile b{font-size:.95rem}
+.hands2{display:flex;flex-wrap:wrap;gap:8px}.hands2 svg{flex:1 1 280px;min-width:0;height:auto}
+.dn{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.lg{display:flex;align-items:center;gap:8px;font-size:.9rem;margin:4px 0}.lg i{width:14px;height:14px;border-radius:4px;display:block}
+.tchips{display:flex;flex-wrap:wrap;gap:8px}.tc2{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--bg)}.tc2 b{display:block;color:var(--acc2);font-size:.9rem}.tc2 span{font-size:.8rem;color:var(--sub)}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.gt{border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:8px 4px;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:44px}
+.gt svg{width:60px;height:66px}.gt small{color:var(--sub);font-size:.7rem}.gt.on{border-color:var(--acc2);box-shadow:0 0 0 2px var(--acc2) inset}
+.pm{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:14px;align-items:start}
+@media(max-width:560px){.pm{grid-template-columns:1fr}.pm svg{max-width:300px;margin:0 auto}}
+.pm svg{width:100%;height:auto}
+.hc{fill:var(--bg);stroke:var(--acc2);stroke-width:2}.hs.on .hc{fill:var(--acc2);fill-opacity:.35}
+.hl{font-size:10.5px;fill:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+<div id="page1">
+<h1>지문 사주</h1>
+<p class="lead">열 손가락의 지문 유형을 고르면 타고난 기질, 강점, 소통 방식, 추천 진로와 다중지능 배치를 읽어 드립니다.</p>
+
+<div class="card">
+<h2>지문 유형 참고</h2>
+<div class="glyphs" id="glyphs"></div>
+<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-size:.9rem">구별 순서 · 관찰 팁 보기</summary><div class="box" style="margin-top:8px"><h4>구별 순서</h4><p><b>1단계. 삼각주 세기</b> — 융선 세 갈래가 만나는 Y자 지점(위 그림의 빨간 삼각형)을 센다. 0개면 호형·텐트, 1개면 고리형(정기·반기), 2개면 소용돌이 계열(두형·쌍기·공작).<br><b>2단계. 세부 구분</b> — 0개는 중앙이 완만하면 호형, 기둥처럼 솔으면 텐트. 1개는 고리가 새끼손가락 쪽이면 정기, 엄지 쪽이면 반기. 2개는 중심이 S자면 쌍기, 세로 타원 겹이면 공작, 원·나선이면 두형.</p></div>
+<p class="note" style="margin-top:10px">관찰 방법: 밝은 곳에서 손끝을 확대 촬영하거나 스킬프·지문 스캐너를 쓰면 선명해요. 손가락에 따라 유형이 다를 수 있어 된 손가락마다 따로 보세요. 그림은 이해를 위한 모식도라 실제 지문은 훨씬 세밀합니다.</p></details>
+</div>
+<div class="card"><h2>손바닥 피문학적 특성</h2><p class="note" style="margin:0 0 10px">손바닥의 무늬 위치별 특성 설명입니다. 표시를 눌러 보세요.</p><div id="palm"></div></div>
+<button class="main" onclick="startTest()">검사 시작</button>
+</div>
+
+<div id="page2" style="display:none">
+<h1>지문 사주</h1>
+<div class="card">
+<h2>열 손가락 선택</h2>
+<p class="note" style="margin:0 0 8px">주로 쓰는 손: <select id="hand" style="flex:none;width:auto"><option value="R">오른손잡이</option><option value="L">왼손잡이</option></select><br>주 기질은 엄지 지문으로 읽습니다(오른손잡이는 왼손 엄지, 왼손잡이는 오른손 엄지). 일부 지문적성검사 해설에서 쓰는 방식입니다.</p>
+<div class="row"><button class="sub" onclick="backToStart()">← 처음으로</button><button class="sub" onclick="fillAll('')">모두 초기화</button></div>
+<div class="hands" id="hands"></div>
+</div>
+
+<button class="main" onclick="analyze()">지문 읽기</button>
+
+</div>
+<div id="result"><h1>지문 사주</h1><div class="viz" id="viz"></div><div class="row" style="justify-content:center;margin-top:14px"><button class="sub" onclick="backToSelect()">← 다시 고르기</button><button class="sub" onclick="restart()">처음으로</button></div></div>
+
+<div class="card">
+<h2>지문의 형성</h2>
+<p style="margin:0;font-size:.9rem">지문은 태아기 약 13~19주 무렵 형성되며, 배열 방식은 염색체의 유전자 조절을 받아 결정되는 것으로 설명됩니다. 1823년 푸르키네가 선의 형태에 따라 지문을 9종으로 나눈 것이 분류 연구의 출발점입니다.</p>
+</div>
+<p class="note">※ 제공해 주신 지문 해설 자료를 바탕으로 한 오락·자기탐색용 도구입니다. 기질·진로를 과학적으로 판정하거나 진단하지 않으며, 참고용으로만 활용하세요.</p>
+</main>
+
+<script>
+const TYPES={
+A:{ko:"호형문",en:"Arch",title:"변화보다 안정을 추구하는 든든한 ‘사무집행자’",sub:"완만한 활 모양 · 안정 지향",
+ g:'<path d="M10 56 Q35 8 60 56"/><path d="M16 60 Q35 22 54 60"/><path d="M22 64 Q35 38 48 64"/>',
+ t:"매우 보수적, 규범적, 사무적. 낯선 환경과 급격한 변화에 강한 스트레스를 받음.",
+ s:"정해진 매뉴얼과 규칙이 명확할 때 완벽한 집행 능력 발휘. 한두 명의 깊은 교우 관계 선호.",
+ c:"신뢰가 쌓일 때까지 기다려 줄 것. 사생활 존중. 지시와 명령을 명확히 제시하는 멘토가 필요.",
+ r:"진로: 공무원, 교사, 회계/세무사, 은행원 · 테라피(A): 만다린, 사이프러스, 캐모마일 블렌딩 (불안감 완화 및 신경계 균형 유지)."},
+T:{ko:"텐트문",en:"Tented Arch",title:"계획적 준비형",sub:"중앙 기둥 산 모양 · 계획 및 준비 지향",
+ g:'<path d="M10 58 Q30 30 35 12 Q40 30 60 58"/><path d="M18 62 Q32 40 35 26 Q38 40 52 62"/><path d="M35 12 V50"/>',
+ t:"긍정적, 낙천적, 진취적, 호기심. 목표 전환이 빠름. 충동적이지 않고 계획적이고 알뜰함. 도전과 변화를 좋아함.",
+ s:"추진력이 뛰어나고 계획 수립 능력이 우수함. 목표를 빠르게 전환하며 다방면으로 도전함.",
+ c:"자신을 표현하는 데 서툴고 감정 변화가 클 수 있으므로 세심한 이해와 경청 필요. 인내심을 키울 수 있도록 지원.",
+ r:"보완점: 추진력은 뛰어나나 끈기와 인내심 보완 필요. 감정 조절 및 자기 표현 교육 권장."},
+L:{ko:"정기문",en:"Loop",title:"사람과 환경에 공명하는 따뜻한 ‘감성주의자’",sub:"새끼손가락 방향으로 흐르는 말굽 모양 · 관계 지향",
+ g:'<path d="M12 64 Q12 18 36 18 Q56 18 54 40 Q52 52 40 50"/><path d="M22 64 Q22 32 36 30 Q46 30 45 42"/>',
+ t:"감수성이 풍부하고 친화력이 강함. 기분이 표정에 직설적으로 드러남. 즉흥적이고 유행에 민감.",
+ s:"맹모삼천지교의 전형. 사춘기 전후 어떤 친구와 환경을 만나느냐가 성공의 핵심.",
+ c:"편안한 분위기 속에서의 폭풍 칭찬과 격려 필수. 장기적 목표보다 단기적 성취를 체계적으로 돕는 것이 중요.",
+ r:"진로: 교사, 간호사, 사회복지사, 예술가, 스튜어디스 · 테라피(L): 레몬, 라임, 클라리세이지 블렌딩 (감정 기복 정화 및 이성적 판단 에너지 부여)."},
+RL:{ko:"반기문",en:"Reverse Loop",title:"세상을 뒤집어 보는 아이디어 뱅크 ‘역방향 창의자’",sub:"엄지 방향으로 역류하는 꼬리 · 역발상 지향",
+ g:'<path d="M58 64 Q58 18 34 18 Q14 18 16 40 Q18 52 30 50"/><path d="M48 64 Q48 32 34 30 Q24 30 25 42"/>',
+ t:"남들과 다른 독특한 관찰력(에디슨, 뉴턴 유형). 규격화되는 것을 극도로 싫어하며 ‘왜요?’라는 질문이 많음.",
+ s:"고집스러워 보이지만, 인정받고 자기 편이 되어주면 엄청난 충성심과 성과를 발휘함.",
+ c:"억누르거나 기성세대의 틀에 가두면 창의력이 사장됨. ‘틀림’이 아닌 ‘다름’으로 인정하고 유머로 접근할 것.",
+ r:"진로: R&D 프로그램 개발, 추상화 계열 예술가, 범죄 프로파일러, 프리랜서 · 테라피(RL): 비판적 생각을 긍정적으로 전환하고 도전을 위한 자신감 상승."},
+W:{ko:"두형문",en:"Whorl",title:"일등을 향해 돌진하는 완벽주의 ‘전략형 리더’",sub:"중심으로 모이는 소용돌이 · 목표 지향",
+ g:'<ellipse cx="35" cy="38" rx="26" ry="28"/><ellipse cx="35" cy="38" rx="17" ry="19"/><ellipse cx="35" cy="38" rx="8" ry="10"/>',
+ t:"주관이 뚜렷하고 승부욕이 강함(‘지고는 못 살아’). 완벽주의적 성향과 저돌적인 추진력 보유.",
+ s:"목표가 주어지면 1등 전략을 세워 반드시 해내는 워커홀릭 기질. 스스로 주도권을 가져야 만족함.",
+ c:"자존심을 지켜 주는 것이 핵심. 지시/명령형 화법보다는 ‘너의 생각은 어떠니?’라는 문답형/토론형 대화가 효과적.",
+ r:"진로: 사업가, 정치가, 언론인, 조직 관리자 · 테라피(W): 오렌지, 페퍼민트, 시더우드 등 (과도한 책임감 완화 및 완벽주의 불안감 해소)."},
+DL:{ko:"쌍기문",en:"Double Loop",title:"융통성과 수용성이 뛰어난 다재다능 ‘조정자’",sub:"S자로 꼬인 두 개의 회오리 · 다방면 수용 지향",
+ g:'<path d="M20 20 Q50 14 50 34 Q50 48 36 44 Q26 40 34 32"/><path d="M50 60 Q20 66 20 46 Q20 32 34 36 Q44 40 36 48"/>',
+ t:"매사에 호기심이 많고 ‘오지랖’이 넓음. 타인의 의견을 잘 수용하며 대립을 두려워함.",
+ s:"적응력이 최고 수준. 2~3가지 목표를 동시에 실행 가능하며 갈등 상황을 평화적으로 중재하는 능력 탁월.",
+ c:"생각이 너무 많아 정리가 안 되면 산만해짐. 계획은 잘 세우나 마무리가 약하므로, 선택과 집중을 돕는 관리가 필수.",
+ r:"진로: 외교관, 국제변호사, 빅데이터 분석가, 평론가, 컨설턴트 · 테라피(DL): 라벤더, 버가못, 프랑킨센스 등 (산만한 마음의 평온함 유지 및 선택의 집중력 강화)."},
+P:{ko:"공작문",en:"Peacock’s Eye",title:"실제적 성취형",sub:"중앙 공작 눈 모양 · 실제적 성취 지향",
+ g:'<ellipse cx="35" cy="38" rx="24" ry="30"/><ellipse cx="35" cy="38" rx="16" ry="21"/><ellipse cx="35" cy="38" rx="8" ry="12"/><path d="M35 8 V68" style="opacity:.25"/>',
+ t:"독창적, 목표 지향적, 결단력. 직관력이 뛰어남. 완벽을 추구하며 리더십이 뛰어남.",
+ s:"수행 능력이 뛰어나고 성취 요구가 강함. 명확한 비전 수립과 실행력 우수.",
+ c:"기준이 높을 수 있으므로 유연성과 협동심 교육 필요. 타인과의 타협 및 공감 능력 필요.",
+ r:"보완점: 독선적일 수 있어 경청과 끈기와 보완 필요. 스트레스 관리 및 자기표현 교육 권장."}
+};
+const FINGERS=[
+ ["엄지","자기이해 지능","자기 자신을 이해하고 느낄 수 있는 인지적 능력","대인관계 지능","타인과 교류하고 이해하며 행동을 해석하는 능력"],
+ ["검지","논리수학 지능","논리적 문제나 반정식을 풀어가는 정신적 과정에 관한 능력","공간 지능","방향감각, 시각, 대상을 시각화하는 능력"],
+ ["중지","신체운동 지능","자신의 운동, 균형, 민첩성, 태도 등을 조절할 수 있는 능력","지체조작 지능","손을 사용하여 사물을 만들어내고 변형시키는 능력"],
+ ["약지","언어 지능","단어를 효과적으로 사용하며 언어를 이해시키는 능력","음악 지능","음악에 대한 전반적인 이해와 분석적이고 기능적인 능력"],
+ ["소지","자연관찰 지능","자연현상에 대한 관찰력, 이해력, 탐구, 제집, 응용, 분류하는 능력","도상 지능","시각예술에서 쓰인 상징과 주제를 식별, 묘사, 분류하고 해석하는 능력"]
+];
+// 오른손: 엄지→소지 / 왼손: 엄지→소지
+const opts='<option value="">선택</option>'+Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v.ko} (${k})</option>`).join('');
+const glyphBox=document.getElementById('glyphs');
+const DET={
+A:{d:"0개",how:"융선이 한쪽에서 들어와 가운데서 활처럼 완만히 솔아오른 뒤 반대쪽으로 빠져나감. 되돌아 오는 고리나 소용돌이가 없음.",key:"삼각주가 없고 완만한 물결 모양.",mk:""},
+T:{d:"0~1개",how:"가운데 융선이 기둥처럼 똑바로 서고 양옝 융선이 그 기둥에 기대는 텐트 모양. 고리처럼 되돌아 나오는 융선은 없음.",key:"호형보다 중앙이 롽지 않고 뾰족하게 솔아 있음.",mk:'<polygon points="31,72 39,72 35,65" style="fill:#c0392b;stroke:none"/>'},
+L:{d:"1개",how:"융선이 한쪽 가장자리에서 들어와 가운데서 U자로 되돌아 같은 쪽으로 나감. 고리는 새끼손가락 방향으로 열림.",key:"고리가 열린 반대편 아래에 삼각주 1개. 한국인에게 가장 흔한 유형으로 소개됨.",mk:'<polygon points="54,72 62,72 58,65" style="fill:#c0392b;stroke:none"/>'},
+RL:{d:"1개",how:"정기문과 같은 고리 모양이지만 고리의 꼬리가 엄지 방향으로 열린 모양으로 역류함.",key:"고리의 열림 방향이 엄지 쪽이면 반기문. 손가락 마다 방향이 바뀔 수 있어 손(왼/오른)을 확인하세요.",mk:'<polygon points="8,72 16,72 12,65" style="fill:#c0392b;stroke:none"/>'},
+W:{d:"2개",how:"융선이 중심 한 점을 둘러싸며 원이나 나선형으로 감김. 되돌아 나가는 쪽이 없고 중심으로 모이는 소용돌이.",key:"양쪽 아래에 삼각주 2개, 중심이 한 개의 동심원이나 나선.",mk:'<polygon points="4,72 12,72 8,65" style="fill:#c0392b;stroke:none"/><polygon points="58,72 66,72 62,65" style="fill:#c0392b;stroke:none"/>'},
+DL:{d:"2개",how:"두 개의 고리가 서로 맞물려 S자처럼 꼬이며 감김. 두 고리의 꼬리는 서로 반대 방향을 향함.",key:"두형문과 달리 중심이 원이 아니라 ‘S’ 자이고, 삼각주 2개.",mk:'<polygon points="4,72 12,72 8,65" style="fill:#c0392b;stroke:none"/><polygon points="58,72 66,72 62,65" style="fill:#c0392b;stroke:none"/>'},
+P:{d:"2개",how:"소용돌이 계열의 한 종류로, 중앙에 길쓱한 타원이 겹겹이 쌓여 공작의 눈 모양을 이룸.",key:"중심부의 세로로 긴 동심 타원이 뚜렷하게 보일 것.",mk:'<polygon points="4,72 12,72 8,65" style="fill:#c0392b;stroke:none"/><polygon points="58,72 66,72 62,65" style="fill:#c0392b;stroke:none"/>'}};
+glyphBox.className='';
+glyphBox.innerHTML='<div class="gg">'+Object.entries(TYPES).map(([k,v])=>`<button type="button" class="gt" data-k="${k}"><svg viewBox="0 0 70 76">${v.g}${DET[k].mk}</svg><b>${v.ko}</b><small>${k}</small></button>`).join('')+'</div><div id="detail" class="box" style="margin-top:10px"><p style="color:var(--sub)">유형을 눌러 모양과 구별 포인트를 확인하세요.</p></div>';
+glyphBox.querySelectorAll('.gt').forEach(b=>b.onclick=()=>{const k=b.dataset.k,v=TYPES[k];glyphBox.querySelectorAll('.gt').forEach(x=>x.classList.toggle('on',x===b));document.getElementById('detail').innerHTML=`<h4>${v.ko} (${k}) · ${v.en}</h4><p><b>모양</b> ${DET[k].how}<br><b>삼각주</b> ${DET[k].d}<br><b>구별 포인트</b> ${DET[k].key}</p>`});
+const hands=document.getElementById('hands');
+['왼손','오른손'].forEach((h,hi)=>{
+ let html=`<div><b>${h}</b>`;
+ FINGERS.forEach((f,i)=>{
+  const mi=hi==0?f[3]:f[1];
+  html+=`<div class="finger"><b>${f[0]}<small>${mi}</small></b><select id="f${hi}${i}">${opts}</select></div>`;
+ });
+ hands.insertAdjacentHTML('beforeend',html+'</div>');
+});
+const TRAITS=[["개방성","소지·약지 사이","낙천적이며 사고성이 강함. 감정표현이 솔직하고 유머감각이 풍부함."],["엄격성","약지·중지 사이","의지가 강하며 자신에 대한 관리가 철저함. 목표를 위해 최선을 다하며 리더십이 강함."],["공상성","소지·약지 사이","상상력이 풍부하며 호기심이 많음."],["고귀성","중지·검지 사이","지도자적 기질이 많음. 자신의 능력을 높이기 위해 노력함."],["호기심","검지·엄지 사이","어려운 상황에 직면하면 정면 돌파 성향이 강함. 불의와 타협하지 않고 바로잡으려 노력함."],["음악성","엄지 아래 손바닥","음악성이 풍부하여 창작 및 연주 능력이 뛰어남. 음악 습득 및 표현 능력이 뛰어남."],["자연성","소지 쪽 손목 부근","타인에 대한 이해심과 배려심이 많음. 의지력이 높으며 한적한 시골 생활을 좋아함."]];
+(function(){
+const pos={개방성:[66,176,-20],공상성:[98,184,28],엄격성:[135,170,28],고귀성:[182,168,28],호기심:[234,226,28],음악성:[236,298,28],자연성:[64,296,28]};
+const box=document.getElementById('palm');
+const hs=TRAITS.map((t,i)=>{const [x,y,dy]=pos[t[0]];return `<g class="hs" data-i="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="15" class="hc"/><ellipse cx="${x}" cy="${y}" rx="6" ry="9" style="stroke:var(--acc2)"/><ellipse cx="${x}" cy="${y}" rx="2.5" ry="4.5" style="stroke:var(--acc2)"/><text x="${x}" y="${y+dy}" text-anchor="middle" class="hl">${t[0]}</text></g>`}).join('');
+box.innerHTML=`<div class="pm"><svg viewBox="0 0 300 350"><g style="fill:var(--card);stroke:var(--ink);stroke-width:2"><rect x="45" y="95" width="30" height="110" rx="15"/><rect x="84" y="55" width="32" height="150" rx="16"/><rect x="125" y="38" width="34" height="165" rx="17"/><rect x="168" y="58" width="32" height="145" rx="16"/><rect x="212" y="175" width="32" height="105" rx="16" transform="rotate(-38 228 230)"/></g><path d="M45 190 H205 L238 225 L260 320 Q155 352 62 325 Q38 260 45 190Z" style="fill:var(--card);stroke:none"/><path d="M45 190 Q38 260 62 325 Q155 352 260 320 L250 270" style="fill:none;stroke:var(--ink);stroke-width:2"/>${hs}</svg><div><div class="tchips">${TRAITS.map((t,i)=>`<button type="button" class="sub" data-i="${i}">${t[0]}</button>`).join('')}</div><div id="pdetail" class="box" style="margin-top:10px"><p style="color:var(--sub)">손바닥의 표시나 이름을 눌러 보세요.</p></div></div></div>`;
+const pick=i=>{const t=TRAITS[i];box.querySelectorAll('.hs').forEach(g=>g.classList.toggle('on',g.dataset.i==i));box.querySelectorAll('button.sub').forEach(b=>b.style.borderColor=b.dataset.i==i?'var(--acc2)':'');document.getElementById('pdetail').innerHTML=`<h4>${t[0]} <small style="color:var(--sub)">${t[1]}</small></h4><p>${t[2]}</p>`};
+box.querySelectorAll('.hs,button.sub').forEach(e=>e.onclick=()=>pick(+e.dataset.i));
+})();
+function backToSelect(){document.getElementById('result').style.display='none';document.getElementById('page2').style.display='block';window.scrollTo(0,0)}
+function restart(){document.getElementById('result').style.display='none';backToStart()}
+function startTest(){document.getElementById('page1').style.display='none';document.getElementById('page2').style.display='block';window.scrollTo(0,0)}
+function backToStart(){document.getElementById('page2').style.display='none';document.getElementById('page1').style.display='block';window.scrollTo(0,0)}
+function fillAll(v){for(let h=0;h<2;h++)for(let i=0;i<5;i++)document.getElementById(`f${h}${i}`).value=v;document.getElementById('result').style.display='none'}
+const COL={A:'#5b7fa6',T:'#d1457c',L:'#e08a3c',RL:'#c0392b',W:'#8e44ad',DL:'#2a9d8f',P:'#2f6fd0'};
+const SUM={
+A:["든든한 사무집행자","보수 · 규범 · 안정","매뉴얼 집행력","신뢰가 쌓일 때까지 기다리기","공무원 · 교사 · 세무사"],
+T:["계획적 준비형","낙천 · 진취 · 호기심","추진력 · 빠른 전환","세심한 경청","보완: 끈기 · 인내"],
+L:["따뜻한 감성주의자","감수성 · 친화력","어떤 환경을 만나느냐","칭찬과 격려","교사 · 간호사 · 예술가"],
+RL:["역방향 창의자","독특한 관찰력 · 반골","인정받으면 충성","‘다름’으로 인정하기","R&D · 예술가 · 프리랜서"],
+W:["전략형 리더","승부욕 · 완벽주의","1등 전략 실행력","문답형 대화","사업가 · 정치가 · 언론인"],
+DL:["다재다능 조정자","호기심 · 수용성","적응력 · 갈등 중재","선택과 집중 돕기","외교관 · 컨설턴트"],
+P:["실제적 성취형","독창 · 결단 · 직관","명확한 비전 · 실행력","유연성 · 협동심","보완: 경청 · 끈기"]};
+const MIN=[["자기이해","대인관계"],["논리수학","공간"],["신체운동","지체조작"],["언어","음악"],["자연관찰","도상"]];
+const MIC=['#2e9e4f','#e0922b','#8e3fa8','#2f6fd0','#8a8f98'];
+const TSUM=["낙천 · 솔직 · 유머","의지 · 자기관리 · 리더십","상상력 · 호기심","지도자 기질","정면 돌파 · 정의감","창작 · 연주","배려 · 의지력"];
+const ICON=['M12 20s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z','M12 3l8 9-8 9-8-9z','M4 5h16v11H9l-4 4v-4H4z','M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM16 8l-2.5 5.5L8 16l2.5-5.5z'];
+const TL=["선천적 기질","강점","소통","진로 · 보완"];
+function gl(k,x,y,s){return `<g class="gl" style="--c:${COL[k]}" transform="translate(${x-35*s},${y-38*s}) scale(${s})">${TYPES[k].g}</g>`}
+function handSvg(h,sel,hd){
+ const X=[45,120,190,258,320],Y=[125,62,40,64,105];
+ let s=`<svg viewBox="0 0 360 205"><ellipse cx="180" cy="168" rx="125" ry="36" style="fill:none;stroke:var(--line);stroke-dasharray:3 4"/>`;
+ for(let i=0;i<5;i++){
+  const x=h==0?X[i]:360-X[i],y=Y[i],k=sel[h][i],mi=MIN[i][h==0?1:0];
+  s+=`<circle cx="${x}" cy="${y}" r="30" style="fill:${k?COL[k]+'22':'none'};stroke:${MIC[i]};stroke-width:4;${k?'':'stroke-dasharray:4 4'}"/>`;
+  if(k)s+=gl(k,x,y,.42);
+  if(i==0&&h==hd)s+=`<circle cx="${x}" cy="${y}" r="38" style="fill:none;stroke:var(--acc2);stroke-width:2"/><text x="${x}" y="${y-43}" text-anchor="middle" style="font-size:12px;font-weight:700;fill:var(--acc2)">주 기질</text>`;
+  s+=`<text x="${x}" y="${y+48}" text-anchor="middle" style="font-size:12px;fill:var(--sub)">${mi}</text>`;
+ }
+ return s+`<text x="180" y="203" text-anchor="middle" style="font-size:13px;font-weight:700;fill:var(--ink)">${h==0?'왼손':'오른손'}</text></svg>`;
+}
+function analyze(){
+ const sel=[[],[]],cnt={};
+ for(let h=0;h<2;h++)for(let i=0;i<5;i++){const v=document.getElementById(`f${h}${i}`).value;sel[h][i]=v;if(v)cnt[v]=(cnt[v]||0)+1}
+ const total=Object.values(cnt).reduce((a,b)=>a+b,0);
+ if(total<1){alert('지문 유형을 한 개 이상 선택해 주세요.');return}
+ const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+ const hd=document.getElementById('hand').value==='L'?1:0;
+ const tv=sel[hd][0],main=tv||sorted[0][0],c=COL[main],S=SUM[main],T=TYPES[main];
+ const pol=(r,a)=>{const t=a*Math.PI/180;return [200+r*Math.sin(t),200-r*Math.cos(t)]};
+ const sec=(r1,r2,a1,a2)=>{const [x1,y1]=pol(r2,a1),[x2,y2]=pol(r2,a2),[x3,y3]=pol(r1,a2),[x4,y4]=pol(r1,a1);return `M${x1} ${y1}A${r2} ${r2} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r1} ${r1} 0 0 0 ${x4} ${y4}Z`};
+ let bg='';for(let r=16;r<=190;r+=9)bg+=`<circle cx="200" cy="200" r="${r}" style="fill:none;stroke:${c};stroke-width:1;opacity:.13"/>`;
+ let arcs='',lbl='';
+ for(let h=0;h<2;h++)for(let i=0;i<5;i++){
+  const th=h==0?198+36*i:162-36*i,a1=th-18+1.2,a2=th+18-1.2,k=sel[h][i],ok=MIC[i];
+  arcs+=`<path d="${sec(128,140,a1,a2)}" style="fill:${ok};stroke:none;opacity:${k?1:.35}"/>`;
+  arcs+=k?`<path d="${sec(88,124,a1,a2)}" style="fill:${COL[k]};stroke:${i==0&&h==hd?'var(--acc2)':'none'};stroke-width:3"/>`:`<path d="${sec(88,124,a1,a2)}" style="fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 3"/>`;
+  const [tx,ty]=pol(106,th);if(k)arcs+=`<text x="${tx}" y="${ty+4}" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#fff">${k}</text>`;
+  const [lx,ly]=pol(150,th),an=lx<190?'end':lx>210?'start':'middle';
+  lbl+=`<text x="${lx}" y="${ly}" text-anchor="${an}" style="font-size:11px;font-weight:700;fill:var(--ink)">${FINGERS[i][0]}</text><text x="${lx}" y="${ly+12}" text-anchor="${an}" style="font-size:9.5px;fill:var(--sub)">${MIN[i][h==0?1:0]}</text>`;
+ }
+ const emblem=`<div class="card emb"><svg viewBox="0 0 400 400">${bg}<g style="opacity:.12">${gl(main,200,200,5)}</g>${arcs}<circle cx="200" cy="200" r="80" style="fill:var(--card);stroke:${c};stroke-width:2"/>${gl(main,200,188,.95)}<text x="200" y="250" text-anchor="middle" style="font-size:13px;font-weight:700;fill:${c}">${T.ko}</text>${lbl}</svg>
+ <div class="code" style="color:${c};font-size:.85rem;font-weight:700">${hd==0?'왼손':'오른손'} 엄지 · ${T.ko} (${main})${tv?'':' · 엄지 미선택, 가장 많은 유형'}</div>
+ <h3>${S[0]}</h3><div class="chips">${S[1].split(' · ').map(w=>`<span style="border-color:${c};color:${c}">${w}</span>`).join('')}</div>
+ <div class="note" style="margin-top:6px">바깥 띠 = 다중지능 · 안쪽 띠 = 지문 유형 · 윤곽선 = 주 기질(엄지) · 왼손은 좌측, 오른손은 우측</div></div>`;
+ const tiles=`<div class="card"><div class="tiles">${[1,2,3,4].map((n,j)=>`<div class="tile"><svg viewBox="0 0 24 24" style="--c:${c}"><path d="${ICON[j]}" style="stroke:${c}"/></svg><div><small>${TL[j]}</small><b>${S[n]}</b></div></div>`).join('')}</div></div>`;
+ const hands=`<div class="card"><h2>열 손가락 지도</h2><div class="hands2">${handSvg(0,sel,hd)}${handSvg(1,sel,hd)}</div></div>`;
+ const Cc=2*Math.PI*52;let off=0,seg='';
+ sorted.forEach(([k,n])=>{const len=n/total*Cc;seg+=`<circle cx="80" cy="80" r="52" style="fill:none;stroke:${COL[k]};stroke-width:22" stroke-dasharray="${len} ${Cc-len}" stroke-dashoffset="${-off}" transform="rotate(-90 80 80)"/>`;off+=len});
+ const donut=`<div class="card"><h2>지문 유형 분포</h2><div class="dn"><svg viewBox="0 0 160 160" style="width:150px;flex:none">${seg}<text x="80" y="86" text-anchor="middle" style="font-size:20px;font-weight:700;fill:var(--ink)">${total}</text></svg><div>${sorted.map(([k,n])=>`<div class="lg"><i style="background:${COL[k]}"></i>${TYPES[k].ko} ${n}</div>`).join('')}</div></div></div>`;
+   document.getElementById('viz').innerHTML=emblem+tiles+hands+donut;
+ document.getElementById('page2').style.display='none';document.getElementById('result').style.display='block';window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
